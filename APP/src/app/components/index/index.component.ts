@@ -4,6 +4,8 @@ import {Pestaña} from 'src/app/models/pestaña';
 import 'codemirror/mode/go/go';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/xml/xml';
+import 'codemirror/mode/julia/julia';
+
 import 'codemirror/addon/fold/xml-fold';
 import { COMPILADORService } from 'src/app/services/compilador.service';
 import { Contenido } from 'src/app/models/contenido';
