@@ -1,12 +1,12 @@
 from .Simbolo import Simbolo
 
 
-class tablaSimbolos(object):
+class Tabla_Simbolo(object):
 
-    def __init__(self, anterior=None):
+    def __init__(self, anterior=None, Entorno = ""):
         self.anterior = anterior
         self.tabla = {}
-        self.Entorno = ""
+        self.Entorno = Entorno
 
     def setVariable(self, simbolo: Simbolo):
         entorno = self
@@ -18,12 +18,13 @@ class tablaSimbolos(object):
                 variable = None
 
             if variable is not None:
-                return None
+                return False
             else:
                 entorno = entorno.getAnterior()
 
         self.tabla[simbolo.getID()] = simbolo
-
+        return True
+    
     def getVariable(self, ID):
         entorno = self
         while entorno is not None:

@@ -86,25 +86,20 @@
           <table class="table diseñoTabla table-dark">
             <thead style="background-color: #2a2a2a;">
               <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Nombre</th>
-                <th scope="col">Grupo</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Fila</th>
-                <th scope="col">Columna</th>
-                <th scope="col">Ambito</th>
-
+                <th scope="col">NOMBRE</th>
+                <th scope="col">TIPO</th>
+                <th scope="col">ÁMBITO</th>
+                <th scope="col">FILA</th>
+                <th scope="col">COLUMNA</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let simbolo of simbolos">
-                <td>{{ simbolo.numero }}</td>
-                <td>{{simbolo.ID}}</td>
-                <td>{{ simbolo.grupo }}</td>
+                <td>{{simbolo.nombre}}</td>
                 <td>{{ simbolo.tipo }}</td>
+                <td>{{ simbolo.ambito }}</td>
                 <td>{{ simbolo.fila }}</td>
                 <td>{{ simbolo.columna }}</td>
-                <td>{{ simbolo.ambito }}</td>
               </tr>
             </tbody>
           </table>
@@ -113,20 +108,20 @@
           <table class="table diseñoTabla table-dark">
             <thead style="background-color: #2a2a2a;">
               <tr>
-                <th scope="col">#</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Descripción</th>
-                <th scope="col">Fila</th>
+                <th scope="col">No</th>
+                <th scope="col">Descripcion</th>
+                <th scope="col">Linea</th>
                 <th scope="col">Columna</th>
+                <th scope="col">Fecha y Hora</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let error of errores">
-                <td>{{ error.numero }}</td>
-                <td>{{ error.tipo }}</td>
+                <td>{{ getNumero() }}</td>
                 <td>{{ error.descripcion }}</td>
                 <td>{{ error.fila }}</td>
                 <td>{{ error.columna }}</td>
+                <td>{{ error.fecha }}</td>
               </tr>
             </tbody>
           </table>

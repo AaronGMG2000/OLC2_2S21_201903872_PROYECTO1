@@ -18,6 +18,7 @@ import { Contenido } from 'src/app/models/contenido';
 export class IndexComponent implements OnInit {
   Pestanas: Array<Pestaña> = [];
   NumTab = 0;
+  NumError = 1;
   ContenidoTab = '';
   actual:any = undefined;
   CONTENT = '';
@@ -166,6 +167,9 @@ export class IndexComponent implements OnInit {
   LlenarContent(text: string): void{
     this.CONTENT = text;
   }
+  getNumero():number{
+    return this.NumError++;
+  }
   Compilar(): void{
     const cont: Contenido = {
       Contenido: this.CONTENT
@@ -173,6 +177,7 @@ export class IndexComponent implements OnInit {
     this.compilador.COMPILAR(cont).subscribe(
       (res: any) => {
         this.CONSOLA = '';
+        this.NumError = 1;
         this.CONSOLA = res.consola;
         this.actual.consola = this.CONSOLA;
         this.errores = res.Errores;

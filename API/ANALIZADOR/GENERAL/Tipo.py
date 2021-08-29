@@ -9,14 +9,13 @@ class Tipos(Enum):
     STRING = 'STRING'
     ARRAY = 'ARREGLO'
     STRUCT = 'STRUCT'
-    NULO = 'NULO'
+    NOTHING = 'NOTHING'
 
 class Aritmeticos(Enum):
     SUMA = '+'
     RESTA = '-'
     MULTIPLICACION = '*'
     DIVISION = '/'
-    MENOSUNARIO = '-'
     POTENCIA = '^'
     MODULO = '%'
 
@@ -33,7 +32,7 @@ class Logicas(Enum):
     AND = '&&'
     NOT = '!'
 
-class TipoNativa(Enum):
+class Tipos_Nativa(Enum):
     PARSE = 'PARSE'
     TRUNC = 'TRUNC'
     FLOAT = 'FLOAT'
