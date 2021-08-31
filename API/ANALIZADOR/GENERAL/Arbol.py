@@ -17,6 +17,7 @@ class Arbol(object):
         self.PilaCiclo = []
         self.PilaFunc = []
         self.c = 0
+        
     def ejecutar(self):
         for inst in self.getInstrucciones():
             res = inst.Ejecutar(self, self.getGlobal())

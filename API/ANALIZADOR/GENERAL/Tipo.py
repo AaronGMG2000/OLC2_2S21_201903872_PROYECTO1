@@ -9,6 +9,8 @@ class Tipos(Enum):
     STRING = 'STRING'
     ARRAY = 'ARREGLO'
     STRUCT = 'STRUCT'
+    OBJECT = 'OBJECT'
+    FUNCTION = 'FUNCTION'
     NOTHING = 'NOTHING'
 
 class Aritmeticos(Enum):
@@ -18,7 +20,6 @@ class Aritmeticos(Enum):
     DIVISION = '/'
     POTENCIA = '^'
     MODULO = '%'
-
 class Relacionales(Enum):
     MAYOR = '>'
     MENOR = '<'

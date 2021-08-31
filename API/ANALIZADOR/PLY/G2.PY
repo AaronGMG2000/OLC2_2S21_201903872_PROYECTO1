@@ -6,13 +6,10 @@ reservadas = {
     "parse": "r_parse",
     "trunc": "r_trunc",
     "float": "r_float",
-    "function": "r_function",
     "string": "r_string",
     "String": "r_stringT",
     "nothing": "r_nothing",
     "Nothing": "r_nothingT",
-    "struct" : "r_struct",
-    "mutable": "r_mutable",
     "Bool": "r_bool",
     "Char": "r_char",
     "typeof": "r_typeof",
@@ -36,7 +33,6 @@ reservadas = {
 }
 
 tokens = [
-    "punto",
     "ptcoma",
     "coma",
     "pizq",
@@ -77,7 +73,6 @@ t_and                = r'&&'
 t_not                = r'!'
 
 # tokens
-t_punto               = r'\.'
 t_coma               = r','
 t_ptcoma             = r';'
 t_dospuntos          = r':'
@@ -156,7 +151,7 @@ def t_newline(t):
 
 def t_error(t):
     print(f"Illegal character '{t.value[0]}'")
-    errors.append(Error("Lexical", f"This is illegal token {t.value[0]}", t.lexer.lineno, col(t)))
+    errors.append(Error("Lexical", f"This is illegal token {t.value[0]}", t.lexer.lineno, column(input, t)))
     t.lexer.skip(1)
 
 
@@ -164,8 +159,7 @@ def column(input_token, token):
     line_start = input_token.rfind('\n', 0, token.lexpos) + 1
     return (token.lexpos - line_start) + 1
 
-def col(token):
-    return (token.lexpos - (to_parse.rfind('\n', 0, token.lexpos) + 1)) + 1
+
 
 from .PLY import lex
 lexer = lex.lex()
@@ -199,11 +193,9 @@ from .INSTRUCCIONES.println import ImprimirEnter
 from .INSTRUCCIONES.WHILE import WHILE
 from .INSTRUCCIONES.Asignacion import Asignacion
 from .INSTRUCCIONES.IF import IF
-from .INSTRUCCIONES.STRUCT import STRUCT
 from .INSTRUCCIONES.condicion import CONDICION
 from .EXPRESIONES.primitivo import Primitivo
 from .EXPRESIONES.aritmetica import Aritmetica
-from .EXPRESIONES.LLAMADA import LLAMADA_EXP
 from .EXPRESIONES.relacional import Relacional
 from .EXPRESIONES.nativa import Nativas
 from .EXPRESIONES.logica import Logica
@@ -241,16 +233,13 @@ def p_instruccion(t):
                     | asignacion ptcoma
                     | condicional r_end ptcoma
                     | while r_end ptcoma
-                    | for r_end ptcoma
-                    | struct ptcoma
-                    | funtion r_end ptcoma
-                    | llamada ptcoma'''
+                    | for r_end ptcoma'''
     t[0] = t[1]
 
 # Condicionales
 def p_condicional_else(t):
     'condicional    : if r_else instrucciones'
-    t[0] = CONDICION(t[1], t.lineno(1), col(t.slice[2]), t[3])
+    t[0] = CONDICION(t[1], t.lineno(1), column(input, t.slice[2]), t[3])
 
 def p_condicional(t):
     'condicional    : if'
@@ -259,22 +248,22 @@ def p_condicional(t):
   
 def p_if(t):
     'if : r_if expresion instrucciones'
-    t[0] = IF(t[2], t[3], t.lineno(1), col(t.slice[1]))
+    t[0] = IF(t[2], t[3], t.lineno(1), column(input, t.slice[1]))
     
 def p_if_elseif(t):
     'if : if r_elseif expresion instrucciones'
-    t[0] = IF(t[3], t[4], t.lineno(1), col(t.slice[2]), t[1])
+    t[0] = IF(t[3], t[4], t.lineno(1), column(input, t.slice[2]), t[1])
 
 ##impresiones
 def p_print(t):
     'print  : r_print pizq parametro_print pder'
-    t[0] = Imprimir(t[3], t.lineno(1), col(t.slice[1]))
+    t[0] = Imprimir(t[3], t.lineno(1), column(input, t.slice[1]))
 
 #ciclos
 
 def p_ins_while(t):
     'while : r_while expresion instrucciones'
-    t[0] = WHILE(t[2], t[3], t.lineno(1), col(t.slice[1]))
+    t[0] = WHILE(t[2], t[3], t.lineno(1), column(input, t.slice[1]))
 
 def p_ins_for(t):
     'for : r_for id r_in expresion instrucciones'
@@ -282,78 +271,16 @@ def p_ins_for(t):
 #asignaciones 
 def p_asignacion(t):
     '''asignacion : id igualT expresion'''
-    t[0] = Asignacion(None, t.lineno(1), col(t.slice[2]),t[3], t[1])
+    t[0] = Asignacion(None, t.lineno(1), column(input, t.slice[2]),t[3], t[1])
 
 def p_asignacionTipo(t):
     '''asignacion : id igualT expresion dospuntos dospuntos tipo'''
-    t[0] = Asignacion(t[6], t.lineno(1), col(t.slice[2]),t[3], t[1])
-
-def p_asignacion_STRUCT_variable(t):
-    '''asignacion : id punto id igualT expresion'''
-    t[0] = Asignacion(None, t.lineno(1), col(t.slice[1]),t[5], t[1], t[3])
-
-def p_llamada(t):
-    '''llamada : id pizq parametro_print pder '''
-
-#function
-
-def p_function(t):
-    '''funtion : r_function pizq parametros_function pder'''
-
-def p_parametros_function(t):
-    '''parametros_function : parametros_function coma id'''
-
-def p_parametros_function2(t):
-    '''parametros_functino : parametros_function coma id dospuntos dospuntos tipo'''
-
-def p_parametros_function_unico(t):
-    '''parametros_function : id'''
-
-def p_parametros_function_tipo(t):
-    '''parametros_function : id dospuntos dospuntos tipo'''
-    
-
-#Structs
-
-def p_struct(t):
-    '''struct : r_struct id parametros_struct r_end'''
-    t[0] = STRUCT(t[2], t[3], t.lineno(1), col(t.slice[2]))
-
-def p_mutable_struct(t):
-    '''struct : r_mutable r_struct id parametros_struct r_end'''
-    t[0] = STRUCT(t[3], t[4], t.lineno(1), col(t.slice[2]), True)
-    
-def p_parametros_struct(t):
-    '''parametros_struct : parametros_struct parametro_struct'''
-    if t[2] != None:
-        t[1].append(t[2])
-    t[0] = t[1]
-
-def p_parametros_struct_unico(t):
-    '''parametros_struct : parametro_struct'''
-    if t[1] == None:
-        t[0] = []
-    else:
-        t[0] = [t[1]]
-
-def p_parametro_struct_nulo(t):
-    '''parametro_struct : id ptcoma'''
-    if t[1] == None:
-        t[0] = []
-    else:
-        t[0] = [t[1],None]
-        
-def p_parametro_struct(t):
-    '''parametro_struct : id dospuntos dospuntos tipo ptcoma'''
-    if t[1] == None:
-        t[0] = []
-    else:
-        t[0] = [t[1], t[4]]
+    t[0] = Asignacion(t[6], t.lineno(1), column(input, t.slice[2]),t[3], t[1])
 
 #impresiones
 def p_println(t):
     'println  : r_println pizq parametro_print pder'
-    t[0] = ImprimirEnter(t[3], t.lineno(1), col(t.slice[1]))
+    t[0] = ImprimirEnter(t[3], t.lineno(1), column(input, t.slice[1]))
 
 def p_parametro_print(t):
     'parametro_print  : parametro_print coma expresion'
@@ -377,23 +304,13 @@ def p_tipo(t):
             | r_char'''
     t[0] = Tipos(t[1].upper())
 
-#Struct Exp
-def p_Expresion_Struct(t):
-    '''expresion : id punto id'''
-    t[0] = Variable(t[1],t.lineno(1), col(t.slice[1]),t[3])
-    
-#Llamada EXP
-
-def p_expresion_llamada(t):
-    '''expresion : id pizq parametro_print pder'''
-    t[0] = LLAMADA_EXP(t[1], t[3], t.lineno(1), col(t.slice[1]))
 #nativas
 def p_nativa(t):
     '''expresion : r_parse pizq tipo coma expresion pder
                  | r_trunc pizq tipo coma expresion pder
                  | r_log pizq expresion coma expresion pder
                  '''
-    t[0] = Nativas(t.lineno(1), col(t.slice[6]), t[3], Tipos_Nativa(t[1].upper()),t[5])
+    t[0] = Nativas(t.lineno(1), column(input, t.slice[6]), t[3], Tipos_Nativa(t[1].upper()),t[5])
 
 def p_nativa_individual(t):
     '''expresion    : r_trunc pizq expresion pder
@@ -407,7 +324,7 @@ def p_nativa_individual(t):
                     | r_cos pizq expresion pder
                     | r_tan pizq expresion pder
                     | r_sqrt pizq expresion pder'''    
-    t[0] = Nativas(t.lineno(1), col(t.slice[4]), t[3], Tipos_Nativa(t[1].upper()))
+    t[0] = Nativas(t.lineno(1), column(input, t.slice[4]), t[3], Tipos_Nativa(t[1].upper()))
     
 #expresiones
 def p_expresion(t):
@@ -426,47 +343,47 @@ def p_expresion(t):
                  | expresion and expresion
                  | expresion or expresion'''
     if t[2] == '+' or t[2] == '-' or t[2] == '*' or t[2] == '/' or t[2] == '%' or t[2] == '^':
-        t[0] = Aritmetica(Aritmeticos(t[2]),t.lineno(1), col(t.slice[2]),t[1],t[3])
+        t[0] = Aritmetica(Aritmeticos(t[2]),t.lineno(1), column(input, t.slice[2]),t[1],t[3])
     elif t[2] == '==' or t[2] == '!=' or t[2] == '>' or t[2] == '>=' or t[2] == '<' or t[2] == '>=':
-        t[0] = Relacional(Relacionales(t[2]),t.lineno(1), col(t.slice[2]),t[1],t[3])
+        t[0] = Relacional(Relacionales(t[2]),t.lineno(1), column(input, t.slice[2]),t[1],t[3])
     elif t[2] == '&&' or t[2] == '||':
-        t[0] = Logica(Logicas(t[2]),t.lineno(1), col(t.slice[2]),t[1],t[3])
+        t[0] = Logica(Logicas(t[2]),t.lineno(1), column(input, t.slice[2]),t[1],t[3])
 
 def p_expresion_unaria(t):
     '''expresion    :   resta expresion %prec UMENOS
                     |   not expresion'''
     if t[1] == '-':
-        t[0] = Aritmetica(Aritmeticos(t[1]),t.lineno(1), col(t.slice[1]),t[2])
+        t[0] = Aritmetica(Aritmeticos(t[1]),t.lineno(1), column(input, t.slice[1]),t[2])
     else:
-        t[0] = Logica(Logicas(t[1]),t.lineno(1), col(t.slice[1]),t[2])
+        t[0] = Logica(Logicas(t[1]),t.lineno(1), column(input, t.slice[1]),t[2])
         
 def p_expresion_primitiva_int(t):
     'expresion    : int'
-    t[0] = Primitivo(Tipos.ENTERO, t[1], t.lineno(1), col(t.slice[1]))
+    t[0] = Primitivo(Tipos.ENTERO, t[1], t.lineno(1), column(input, t.slice[1]))
 
 def p_expresion_primitiva_float(t):
     'expresion    : decimal'
-    t[0] = Primitivo(Tipos.FLOAT, t[1], t.lineno(1), col(t.slice[1]))
+    t[0] = Primitivo(Tipos.FLOAT, t[1], t.lineno(1), column(input, t.slice[1]))
 
 def p_expresion_primitiva_char(t):
     'expresion    : char'
-    t[0] = Primitivo(Tipos.CHAR, t[1], t.lineno(1), col(t.slice[1]))
+    t[0] = Primitivo(Tipos.CHAR, t[1], t.lineno(1), column(input, t.slice[1]))
 
 def p_expresion_primitiva_string(t):
     'expresion    : string'    
-    t[0] = Primitivo(Tipos.STRING, t[1], t.lineno(1), col(t.slice[1]))
+    t[0] = Primitivo(Tipos.STRING, t[1], t.lineno(1), column(input, t.slice[1]))
 
 def p_expresion_primitiva_bool(t):
     '''expresion    : r_false
                     | r_true'''
     if t[1]=='true':
-        t[0] = Primitivo(Tipos.BOOL, True, t.lineno(1), col(t.slice[1]))
+        t[0] = Primitivo(Tipos.BOOL, True, t.lineno(1), column(input, t.slice[1]))
     else:
-        t[0] = Primitivo(Tipos.BOOL, False, t.lineno(1), col(t.slice[1]))
+        t[0] = Primitivo(Tipos.BOOL, False, t.lineno(1), column(input, t.slice[1]))
 
 def p_variable(t):
     '''expresion : id'''
-    t[0] = Variable(t[1], t.lineno(1), col(t.slice[1]))
+    t[0] = Variable(t[1], t.lineno(1), column(input, t.slice[1]))
 
 # Definicion de expresiones 
 def p_agrupacion_expresion(t):
@@ -477,7 +394,7 @@ def p_agrupacion_expresion(t):
 def p_error(p):
     if p:
         errors.append(Error('Syntax',
-                   f'error at token {p.value}', p.lineno,  col(p)))
+                   f'error at token {p.value}', p.lineno,  column(input, p)))
         print(f'Syntax error at token {p.value}', p.lineno, p.lexpos)
         parser.errok()
     else:
@@ -497,5 +414,4 @@ def get_errors():
 def parse(i):
     global to_parse
     to_parse = i
-    lexer.lineno = 1
     return parser.parse(i)
