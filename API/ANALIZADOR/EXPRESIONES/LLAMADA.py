@@ -13,7 +13,6 @@ class LLAMADA_EXP(Instruccion):
         super().__init__(Tipos.STRUCT, fila, columna)
         self.id = id
         self.parametros = parametros
-        self.mutable = False
         
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
         variable = tabla.getVariable(self.id)
@@ -25,10 +24,12 @@ class LLAMADA_EXP(Instruccion):
                 dic = dict(variable.getValor())
                 diccionario = variable.getValor()
                 t_p = len(self.parametros)
-                t_v =len(list(dic.keys())) 
+                t_v =len(list(dic.keys()))-2
                 if  t_v != t_p:
                     return Error("Sintactico","Class Struct necesita "+str(t_v)+" parametros y esta recibiendo "+str(t_p)+" parametros", self.fila, self.columna)
                 for key in list(dic.keys()):
+                    if key == 1 or key == 2:
+                        continue
                     valor = self.parametros[a].Ejecutar(arbol, tabla)
                     if isinstance(valor, Error): return valor
                     if dic[key][2] is not None and dic[key][2]!= self.parametros[a].tipo:
@@ -37,7 +38,6 @@ class LLAMADA_EXP(Instruccion):
                     dic[key][0] = valor
                     dic[key][1] = self.parametros[a].tipo
                     a = a+1
-                self.mutable = variable.mutable
                 self.tipo = Tipos.OBJECT
                 return dic
             elif variable.getTipo() == Tipos.FUNCTION:
@@ -47,6 +47,19 @@ class LLAMADA_EXP(Instruccion):
         
     def getNodo(self) -> NodoAST:
         nodo = NodoAST("LLAMADA")
+        nodo.agregarHijo(self.id)
+        nodo.agregarHijo("(")
+        para = None
+        anterior = None
+        for par in self.parametros:
+            para = NodoAST("PARAMETROS")
+            if anterior is not None:
+                para.agregarHijoNodo(anterior)
+            para.agregarHijoNodo(par.getNodo())
+            anterior = para
+        nodo.agregarHijoNodo(para)
+        nodo.agregarHijo(")")
+        nodo.agregarHijo(";")
         return nodo
     
     

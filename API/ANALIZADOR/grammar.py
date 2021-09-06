@@ -63,6 +63,8 @@ tokens = [
     "not",
     "igualT",
     "dospuntos",
+    "cizq",
+    "cder",
 ] + list(reservadas.values())
 
 #condicionales y logicas
@@ -84,6 +86,8 @@ t_dospuntos          = r':'
 t_pizq               = r'\('
 t_pder               = r'\)'
 t_igualT             = r'='
+t_cizq               = r'\['
+t_cder               = r'\]'
 #aritmetica
 t_suma               = r'\+'
 t_resta              = r'\-'
@@ -203,6 +207,7 @@ from .INSTRUCCIONES.STRUCT import STRUCT
 from .INSTRUCCIONES.condicion import CONDICION
 from .EXPRESIONES.primitivo import Primitivo
 from .EXPRESIONES.aritmetica import Aritmetica
+from .EXPRESIONES.ARRAY import ARRAY
 from .EXPRESIONES.LLAMADA import LLAMADA_EXP
 from .EXPRESIONES.relacional import Relacional
 from .EXPRESIONES.nativa import Nativas
@@ -244,7 +249,8 @@ def p_instruccion(t):
                     | for r_end ptcoma
                     | struct ptcoma
                     | funtion r_end ptcoma
-                    | llamada ptcoma'''
+                    | llamada ptcoma
+                    | array ptcoma'''
     t[0] = t[1]
 
 # Condicionales
@@ -288,10 +294,47 @@ def p_asignacionTipo(t):
     '''asignacion : id igualT expresion dospuntos dospuntos tipo'''
     t[0] = Asignacion(t[6], t.lineno(1), col(t.slice[2]),t[3], t[1])
 
-def p_asignacion_STRUCT_variable(t):
-    '''asignacion : id punto id igualT expresion'''
-    t[0] = Asignacion(None, t.lineno(1), col(t.slice[1]),t[5], t[1], t[3])
+#ASIGNACION ARRAY
+#Arrays
+def p_asignacion_array_struct(t):
+    '''array : id number_array lista_id igualT expresion'''
+    t[0] = Asignacion(None, t.lineno(1), col(t.slice[1]),t[5], t[1], t[3], t[2])
 
+def p_asignacion_array(t):
+    '''array : id number_array igualT expresion'''
+    t[0] = Asignacion(None, t.lineno(1), col(t.slice[1]),t[4], t[1], None, t[2])
+    
+#Asignacion STRUCT
+def p_asignacion_STRUCT_variable(t):
+    '''asignacion : id lista_id igualT expresion'''
+    t[0] = Asignacion(None, t.lineno(1), col(t.slice[1]),t[4], t[1], t[2])
+
+def p_lista_id(t):
+    '''lista_id : lista_id punto id'''
+    if t[3] != None:
+        t[1].append([t[3], None])
+    t[0] = t[1]
+    
+def p_lista_id_array(t):
+    '''lista_id : lista_id punto id number_array'''
+    if t[3] != None:
+        t[1].append([t[3], t[4]])
+    t[0] = t[1]
+    
+def p_lista_id_u(t):
+    '''lista_id : punto id'''
+    if t[2] == None:
+        t[0] = []
+    else:
+        t[0] = [[t[2], None]]
+
+def p_lista_id_u_lista(t):
+    '''lista_id : punto id number_array'''
+    if t[2] == None:
+        t[0] = []
+    else:
+        t[0] = [[t[2], t[3]]]
+        
 def p_llamada(t):
     '''llamada : id pizq parametro_print pder '''
 
@@ -379,9 +422,57 @@ def p_tipo(t):
 
 #Struct Exp
 def p_Expresion_Struct(t):
-    '''expresion : id punto id'''
-    t[0] = Variable(t[1],t.lineno(1), col(t.slice[1]),t[3])
+    '''expresion : expresion punto id'''
+    t[0] = Variable(t[1],t.lineno(1), col(t.slice[3]),t[3])
+
+def p_Expresion_Struct_lista(t):
+    '''expresion : expresion punto id number_array'''
+    t[0] = Variable(t[1],t.lineno(1), col(t.slice[3]),t[3],t[4])
+#Arrays
+#id array
+def p_expresion_array_id(t):
+    '''expresion : id number_array'''
+    t[0] = Variable(t[1], t.lineno(1), col(t.slice[1]),None, t[2])
     
+#number array
+
+def p_expresion_id_content_unico(t):
+    '''number_array : cizq expresion cder'''
+    if t[2] == None:
+        t[0] = []
+    else:
+        t[0] = [t[2]]
+        
+def p_expresion_id_content(t):
+    '''number_array : number_array cizq expresion cder'''
+    if t[3] != None:
+        t[1].append(t[3])
+    t[0] = t[1]
+
+#Expresion_Array
+def p_expresion_Array(t):
+    '''expresion : cizq expresion_exp cder'''
+    t[0] = ARRAY(t[2], t.lineno(1), col(t.slice[1]))
+
+def p_coma_expresion(t):
+    '''expresion_exp : expresion_exp coma expresion'''
+    if t[3] != None:
+        t[1].append(t[3])
+    t[0] = t[1]
+    
+def p_coma_expresion_unico(t):
+    '''expresion_exp : expresion'''
+    if t[1] == None:
+        t[0] = []
+    else:
+        t[0] = [t[1]]
+        
+#EXP rango
+
+def p_rango(t):
+    '''expresion : expresion dospuntos expresion'''   
+    
+        
 #Llamada EXP
 
 def p_expresion_llamada(t):

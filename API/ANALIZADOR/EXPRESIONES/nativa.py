@@ -60,23 +60,23 @@ class Nativas(Instruccion):
                 
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('NATIVA')
-        if self.tipoNativa == Tipos_Nativa.LOG:
-            nodo.agregarHijo(self.Nativa.value)
-            nodo.agregarHijo('(')
-            nodo.agregarHijoNodo(self.expresion.getNodo())
-            nodo.agregarHijo(',')
-            nodo.agregarHijoNodo(self.valor2.getNodo())
-            nodo.agregarHijo(')')
-        elif self.valor2 is not None:
-            nodo.agregarHijo(self.Nativa.value)
-            nodo.agregarHijo('(')
-            nodo.agregarHijo(self.expresion.value)
-            nodo.agregarHijo(',')
-            nodo.agregarHijoNodo(self.valor2.getNodo())
-            nodo.agregarHijo(')')
-        else:
-            nodo.agregarHijo(self.Nativa.value)
-            nodo.agregarHijo('(')
-            nodo.agregarHijoNodo(self.expresion.getNodo())
-            nodo.agregarHijo(')')
+        # if self.tipoNativa == Tipos_Nativa.LOG:
+        #     nodo.agregarHijo(self.Nativa.value)
+        #     nodo.agregarHijo('(')
+        #     nodo.agregarHijoNodo(self.expresion.getNodo())
+        #     nodo.agregarHijo(',')
+        #     nodo.agregarHijoNodo(self.valor2.getNodo())
+        #     nodo.agregarHijo(')')
+        # elif self.valor2 is not None:
+        #     nodo.agregarHijo(self.Nativa.value)
+        #     nodo.agregarHijo('(')
+        #     nodo.agregarHijo(self.expresion.value)
+        #     nodo.agregarHijo(',')
+        #     nodo.agregarHijoNodo(self.valor2.getNodo())
+        #     nodo.agregarHijo(')')
+        # else:
+        #     nodo.agregarHijo(self.Nativa.value)
+        #     nodo.agregarHijo('(')
+        #     nodo.agregarHijoNodo(self.expresion.getNodo())
+        #     nodo.agregarHijo(')')
         return nodo

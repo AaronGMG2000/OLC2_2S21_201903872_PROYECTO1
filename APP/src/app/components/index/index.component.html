@@ -48,16 +48,18 @@
               [options]="{
                 theme: 'material',
                 mode: 'julia',
-                lineNumbers: true,
                 styleActiveLine: true,
-                lineWrapping: true,
-                columnNumbers:true,
+                lineNumbers: true,
+                indentUnit: 2,
+                indentWithTabs: true,
+                autoCloseTags: true,
+                matchTags: false,
                 foldGutter: true,
-                gutter: true,
+                lineWrapping: true,
                 gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter', 'CodeMirror-lint-markers'],
                 autoCloseBrackets: true,
-                autocapitalize: true,
-                matchBrackets: true
+                matchBrackets: true,
+                lint: true
               }"
               ></ngx-codemirror>
             </div>

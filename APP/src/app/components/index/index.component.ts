@@ -4,7 +4,17 @@ import {Pestaña} from 'src/app/models/pestaña';
 import 'codemirror/mode/go/go';
 import 'codemirror/mode/markdown/markdown';
 import 'codemirror/mode/xml/xml';
+import 'codemirror/addon/fold/xml-fold';
 import 'codemirror/mode/julia/julia';
+import 'codemirror/mode/javascript/javascript';
+import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/brace-fold';
+import 'codemirror/lib/codemirror';
+import 'codemirror/addon/edit/closebrackets';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/lint/lint';
+import 'codemirror/addon/lint/json-lint';
+
 
 import 'codemirror/addon/fold/xml-fold';
 import { COMPILADORService } from 'src/app/services/compilador.service';

@@ -5,6 +5,7 @@ from ..GENERAL.Arbol import Arbol
 from ..GENERAL.Tabla_Simbolo import Tabla_Simbolo
 from ..GENERAL.Tipo import Tipos
 from ..GENERAL.error import Error
+from ..GENERAL.Simbolo import Simbolo
 
 class Imprimir(Instruccion):
 
@@ -18,6 +19,14 @@ class Imprimir(Instruccion):
         for ex in self.expresion:
             val = ex.Ejecutar(arbol, tabla)
             if isinstance(val, Error): return val
+            if ex.tipo == Tipos.OBJECT:
+                val = self.getStruct("", val)
+            elif ex.tipo == Tipos.STRUCT:
+                val = val[1]
+            elif ex.tipo == Tipos.ARRAY :
+                val = self.getArrayValue(val, "")
+            
+                
             if tamaño == len(self.expresion):
                 valor += str(val)
             else:
@@ -26,6 +35,49 @@ class Imprimir(Instruccion):
             tamaño+=1
 
         arbol.updateConsola(valor)
+    
+    def getStruct(self, val, struct):
+        val += struct[1] + "("
+        lista = list(struct.keys())
+        for key in lista:
+            if key == 1 or key == 2:
+                continue
+            if key != lista[2]:
+                val +=","
+            valor = struct[key]
+            if valor[1] == Tipos.OBJECT:
+                val = self.getStruct(val, valor[0])
+            elif valor[1] == Tipos.ARRAY:
+                val = str(self.getArrayValue(valor[0], val))
+            elif valor[1] == Tipos.STRING:
+                val +='"'+valor[0]+'"'
+            elif valor[1] == Tipos.CHAR:
+                val +='"'+valor[0]+'"'
+            else:
+                val += str(valor[0])
+        val += ")"
+        return val
+    
+    def getArrayValue(self, simb, val):
+        val += '['
+        for sim in simb:
+            if sim != simb[0]:
+                val+=","
+            if not isinstance(sim, Simbolo):
+                val = self.getArrayValue(sim, val)
+            else:
+                valor = sim.getValor()
+                if sim.getTipo() == Tipos.OBJECT:
+                    val = self.getStruct(val, valor)
+                else:
+                    if sim.getTipo() == Tipos.STRING:
+                        val +='"'+valor+'"'
+                    elif sim.getTipo() == Tipos.CHAR:
+                        val +="'"+valor+"'"
+                    else:
+                        val+=str(valor)
+        val += ']'
+        return val
         
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('PRINT')

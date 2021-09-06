@@ -12,6 +12,7 @@ class Tipos(Enum):
     OBJECT = 'OBJECT'
     FUNCTION = 'FUNCTION'
     NOTHING = 'NOTHING'
+    RANGO = 'RANGO'
 
 class Aritmeticos(Enum):
     SUMA = '+'
