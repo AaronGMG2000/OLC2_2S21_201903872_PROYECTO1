@@ -66,7 +66,7 @@ tokens = [
     "cizq",
     "cder",
 ] + list(reservadas.values())
-
+#t_token
 #condicionales y logicas
 t_igual              = r'=='
 t_diferente          = r'!='
@@ -100,7 +100,7 @@ t_elevado            = r'\^'
 
 def t_id(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
-    t.type = reservadas.get(t.value, 'id')
+    t.type = reservadas.get(t.value, 'id') 
 
     return t
 
@@ -163,10 +163,6 @@ def t_error(t):
     errors.append(Error("Lexical", f"This is illegal token {t.value[0]}", t.lexer.lineno, col(t)))
     t.lexer.skip(1)
 
-
-def column(input_token, token):
-    line_start = input_token.rfind('\n', 0, token.lexpos) + 1
-    return (token.lexpos - line_start) + 1
 
 def col(token):
     return (token.lexpos - (to_parse.rfind('\n', 0, token.lexpos) + 1)) + 1
@@ -341,7 +337,7 @@ def p_llamada(t):
 #function
 
 def p_function(t):
-    '''funtion : r_function pizq parametros_function pder'''
+    '''funtion : r_function id pizq parametros_function pder instrucciones r_end'''
 
 def p_parametros_function(t):
     '''parametros_function : parametros_function coma id'''
@@ -426,7 +422,7 @@ def p_Expresion_Struct(t):
     t[0] = Variable(t[1],t.lineno(1), col(t.slice[3]),t[3])
 
 def p_Expresion_Struct_lista(t):
-    '''expresion : expresion punto id number_array'''
+    '''expresion : expresion punto id number_array''' 
     t[0] = Variable(t[1],t.lineno(1), col(t.slice[3]),t[3],t[4])
 #Arrays
 #id array

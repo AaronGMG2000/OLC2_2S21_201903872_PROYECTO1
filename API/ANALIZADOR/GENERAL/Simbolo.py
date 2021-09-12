@@ -2,13 +2,12 @@ from .Tipo import Tipos
 
 
 class Simbolo(object):
-    def __init__(self, valor, tipo: Tipos, id, fila, columna, rango=None):
+    def __init__(self, valor, tipo: Tipos, id, fila, columna):
         self.tipo = tipo
         self.id = id
         self.fila = fila
         self.columna = columna
         self.valor = valor
-        self.tipado_rango = rango
         
     def getID(self):
         return self.id

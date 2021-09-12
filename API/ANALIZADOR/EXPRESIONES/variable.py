@@ -22,27 +22,14 @@ class Variable(Instruccion):
                 if self.tipo == Tipos.ARRAY:
                     arr = self.getArrayValue(variable.getValor(), [])
                     if self.posiciones is not None:
-                        ar = ""
-                        for posicion in self.posiciones:
-                            ar +="["
-                            res = posicion.Ejecutar(arbol, tabla)
-                            if isinstance(res, Error):return res
-                            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGO:
-                                return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
-                            if posicion.tipo == Tipos.ENTERO:
-                                res-=1
-                                if res < 0:
-                                    return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
-                            ar += str(res)
-                            ar +="]"
                         try:
-                            val = eval(f"arr{ar}")
-                            print(val)
+                            val = self.getArray(arr, arbol, tabla)
+                            if isinstance(val, Error): return val
                             if isinstance(val, Simbolo):
                                 self.tipo = val.getTipo()
                                 return val.getValor()
                             else:
-                                print(val)
+                                self.tipo = Tipos.ARRAY
                                 return val
                         except:
                             return Error("Sintactico","Posicion de Array fuera de rango", self.fila, self.columna)
@@ -66,20 +53,8 @@ class Variable(Instruccion):
                 if self.posiciones == None:
                     return get[0]
                 else:
-                    ar = ""
-                    for posicion in self.posiciones:
-                        ar +="["
-                        res = posicion.Ejecutar(arbol, tabla)
-                        if isinstance(res, Error):return res
-                        if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGO:
-                            return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
-                        if posicion.tipo == Tipos.ENTERO:
-                            res-=1
-                            if res < 0:
-                                return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
-                        ar += str(res)
-                        ar +="]"
-                    ress = eval(f'get[0]{ar}')
+                    ress = self.getArray(get[0], arbol, tabla)
+                    if isinstance(ress, Error): return ress
                     if isinstance(ress, Simbolo):
                         self.tipo = ress.getTipo()
                         return ress.getValor()
@@ -88,6 +63,35 @@ class Variable(Instruccion):
                         return ress
             except:
                 return Error("Sintactico","La propiedad "+self.id2+" No existe en el struct indicado", self.fila, self.columna)
+    
+    def getArray(self, array, arbol, tabla):
+        data = array
+        for posicion in self.posiciones:
+            res = posicion.Ejecutar(arbol, tabla)
+            if isinstance(res, Error):return res
+            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGE:
+                return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
+            if posicion.tipo == Tipos.ENTERO:
+                res-=1
+                if res < 0:
+                    return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
+                data = data[res]
+            if posicion.tipo == Tipos.ARRAY:
+                data = self.clonarSimbolos(data, posicion[0]-1, posicion[1]-1)
+                if isinstance(data, Error): return data
+        return data
+        
+    def clonarSimbolos(self, array, izquierda, derecha):
+        if izquierda <0 or derecha<0:
+            return Error("Sintactico", "Valor fuera de rango del array", self.fila, self.columna)
+        newarray = []
+        array2 = array[izquierda:derecha]
+        for sim in array2:
+            if isinstance(sim, Simbolo):
+                newarray.append(Simbolo(sim.valor, sim.tipo, "", sim.fila, sim.columna))
+            else:
+                newarray.append(sim)
+        return newarray
         
     def getArrayValue(self, simb, arr):
         for sim in simb:
@@ -97,6 +101,9 @@ class Variable(Instruccion):
                 arr.append(sim)
         return arr
     
+    
+        
+            
     
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('VARIABLE')

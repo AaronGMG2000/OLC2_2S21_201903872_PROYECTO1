@@ -23,6 +23,12 @@ class Rango(Instruccion):
         if isinstance(v1, Error): return v1
         v2 = self.valor2.Ejecutar(arbol, tabla)
         if isinstance(v2, Error): return v2
+        if self.valor1.tipo!=Tipos.FLOAT and self.valor1.tipo!=Tipos.ENTERO:
+            return Error("Sintactico","El rango unicamente puede tener valores numericos",self.fila, self.columna)
+        if self.valor2.tipo!=Tipos.FLOAT and self.valor2.tipo!=Tipos.ENTERO:
+            return Error("Sintactico","El rango unicamente puede tener valores numericos",self.fila, self.columna)
+        
         if v1 > v2:
-            return("Sintactico", "El primer valor del rango debe ser mayor al 2do", self.fila, self.columna)
+            return Error("Sintactico", "El primer valor del rango debe ser mayor al 2do", self.fila, self.columna)
+        self.tipo = Tipos.RANGE
         return [v1, v2]

@@ -119,7 +119,7 @@ D_NATIVA = {
     'TYPEOF-ARREGLO':['"Arreglo"',Tipos.STRING],
     'TYPEOF-STRING':['"String"',Tipos.STRING],
     'TYPEOF-STRUCT':['"Struct"',Tipos.STRING],
-    'TYPEOF-RANGO':['"Struct"',Tipos.RANGO],
+    'TYPEOF-RANGO':['"Struct"',Tipos.RANGE],
     'TYPEOF-OBJECT':['"Struct"',Tipos.STRUCT],
     
     #uppercase y lowercase

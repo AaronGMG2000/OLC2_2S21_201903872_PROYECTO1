@@ -67,16 +67,17 @@ class Asignacion(Instruccion):
                     return Error("Sintactico", "Posición fuera de rango", self.fila, self.columna)
                     
             if variable.getTipo() == Tipos.OBJECT:
-                if not variable.getValor()[2]:
-                    return Error("Semantico","el objeto struct no es mutable", self.fila, self.columna)
                 try:
+                    newDic = None
                     get = variable.getValor()
                     a = 1
                         
                     for id2 in self.id2:
                         if a < len(self.id2):
+                            newDic = get
                             get = get[id2[0]][0]
                         else:
+                            newDic = get
                             get = get[id2[0]]
                         if id2[1] is not None:
                             if a < len(self.id2):
@@ -86,8 +87,10 @@ class Asignacion(Instruccion):
                                     va = eval(f'get{ar}')
                                     if isinstance(va, Simbolo):
                                         get = va.getValor()
+                                        newDic = get
                                     else: 
                                         get = va
+                                        newDic = get
                                 except:
                                     return Error("Sintactico", "Posición fuera de rango", self.fila, self.columna)
                             else:
@@ -116,6 +119,8 @@ class Asignacion(Instruccion):
                     if get[2]!=None and get[2] != self.expresion.tipo:
                         return Error("Semantico", "Se esperaba un tipo "+self.tipo.value+" para poder asignar al parametro "+id2[0], self.fila, self.columna)
                     self.tipo = self.expresion.tipo
+                    if not newDic[2]:
+                        return Error("Semantico","el objeto struct no es mutable", self.fila, self.columna)
                     get[1] = self.expresion.tipo
                     get[0] = content
                     return content
@@ -131,7 +136,7 @@ class Asignacion(Instruccion):
             ar +="["
             res = posicion.Ejecutar(arbol, tabla)
             if isinstance(res, Error):return res
-            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGO:
+            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGE:
                 return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
             if posicion.tipo == Tipos.ENTERO:
                 res-=1
@@ -146,7 +151,7 @@ class Asignacion(Instruccion):
             posicion = list[pos]
             res = posicion.Ejecutar(arbol, tabla)
             if isinstance(res, Error): return res
-            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGO:
+            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGE:
                 return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
             if posicion.tipo == Tipos.ENTERO:
                 res-=1
@@ -158,7 +163,7 @@ class Asignacion(Instruccion):
             posicion = list[pos]
             res = posicion.Ejecutar(arbol, tabla)
             if isinstance(res, Error): return res
-            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGO:
+            if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGE:
                 return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
             if posicion.tipo == Tipos.ENTERO:
                 res-=1
@@ -169,10 +174,9 @@ class Asignacion(Instruccion):
             else:
                 if isinstance(array[res], Simbolo):
                     array[res].setValor(nuevo)
-                    array[res].rango = self.expresion.rango
                     array[res].setTipo(self.expresion.tipo)
                 else:
-                    array[res] = Simbolo(nuevo, self.expresion.tipo, "", self.fila, self.columna, self.expresion.rango)
+                    array[res] = Simbolo(nuevo, self.expresion.tipo, "", self.fila, self.columna)
             return  array
     
     

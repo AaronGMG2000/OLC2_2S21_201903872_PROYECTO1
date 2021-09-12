@@ -19,8 +19,6 @@ class ARRAY(Instruccion):
             if isinstance(res, Error): return res
             if exp.tipo == Tipos.ARRAY:
                 valor.append(res)
-            elif exp.tipo == Tipos.RANGO:
-                valor.append(Simbolo(res, exp.tipo, "", self.fila, self.columna, exp.rango))
             else:
                 valor.append(Simbolo(res, exp.tipo, "", self.fila, self.columna))
         return valor
