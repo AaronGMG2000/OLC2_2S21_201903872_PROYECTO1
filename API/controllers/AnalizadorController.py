@@ -17,3 +17,7 @@ async def analysis(req: RequestModel):
         return {"consola": ast.getConsola(), "Simbolo": ast.Lista_Simbolo.getLista(), "Errores": ast.errores}
     except Exception as e:
         return {"error": str(e)}
+    
+@router.get('/Prueba')
+async def analysis():
+    return {"prueba": "hola"}
