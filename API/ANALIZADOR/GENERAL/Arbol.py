@@ -23,9 +23,12 @@ class Arbol(object):
             res = inst.Ejecutar(self, self.getGlobal())
             if isinstance(res, Error):
                 self.errores.append(res)
-            self.raiz.agregarHijoNodo(inst.getNodo())
-        self.graphAST()
-            
+            # self.raiz.agregarHijoNodo(inst.getNodo())
+        # self.graphAST()
+        x = 1
+        for er in self.errores:
+            er.numero = x
+            x+=1
     def getInstrucciones(self):
         return self.instrucciones
 

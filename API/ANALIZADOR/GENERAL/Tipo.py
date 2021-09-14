@@ -14,6 +14,11 @@ class Tipos(Enum):
     NOTHING = 'NOTHING'
     RANGE = 'RANGE'
 
+class CICLICO(Enum):
+    BREAK= 'BREAK'
+    CONTINUE= 'CONTINUE'
+    RETURN= 'RETURN'
+
 class Aritmeticos(Enum):
     SUMA = '+'
     RESTA = '-'

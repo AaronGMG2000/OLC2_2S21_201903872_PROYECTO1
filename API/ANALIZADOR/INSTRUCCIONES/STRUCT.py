@@ -22,7 +22,7 @@ class STRUCT(Instruccion):
             for par in self.parametros:#variable, tipo de variable, tipo obligatorio
                 content[par[0]] = [None, None, par[1]]
             arbol.Lista_Simbolo.Agregar(Lista_Simbolo(self.id, "STRUCT", tabla.Entorno, self.fila, self.columna))
-            nuevoSimbolo = Simbolo(content, self.tipo, self.id, self.fila, self.columna, None)
+            nuevoSimbolo = Simbolo(content, self.tipo, self.id, self.fila, self.columna)
             tabla.setVariable(nuevoSimbolo)
             return content
         else:

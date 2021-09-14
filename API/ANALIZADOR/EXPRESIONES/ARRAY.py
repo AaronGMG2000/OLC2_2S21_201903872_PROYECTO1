@@ -22,6 +22,7 @@ class ARRAY(Instruccion):
             else:
                 valor.append(Simbolo(res, exp.tipo, "", self.fila, self.columna))
         return valor
+    
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('ARRAY')
         return nodo

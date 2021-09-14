@@ -8,7 +8,9 @@ import { Contenido } from '../models/contenido';
 })
 export class COMPILADORService {
 
-  API_URI = 'https://peaceful-shelf-02245.herokuapp.com';
+  // API_URI = 'https://peaceful-shelf-02245.herokuapp.com';
+  API_URI = 'http://localhost:3000';
+
 
   constructor(private http: HttpClient, private router: Router) { }
 

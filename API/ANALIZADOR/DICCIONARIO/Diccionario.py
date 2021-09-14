@@ -45,6 +45,14 @@ D_Relacional = {
     "FLOAT64==INT64": Tipos.BOOL,
     "FLOAT64==FLOAT64": Tipos.BOOL,
     "INT64==FLOAT64": Tipos.BOOL,
+    
+    "NOTHING==NOTHING": Tipos.BOOL,
+    "RANGE==RANGE": Tipos.BOOL,
+    "STRUCT==STRUCT": Tipos.BOOL,
+    "ARRAY==ARRAY": Tipos.BOOL,
+    "OBJECT==NOTHING": Tipos.BOOL,
+    "OBJECT==OBJECT": Tipos.BOOL,
+    
     "STRING==STRING": Tipos.BOOL,
     "BOOL==BOOL": Tipos.BOOL,
     # !=
@@ -54,6 +62,12 @@ D_Relacional = {
     "INT64!=FLOAT64": Tipos.BOOL,
     "STRING!=STRING": Tipos.BOOL,
     "BOOL!=BOOL": Tipos.BOOL,
+    "NOTHING!=NOTHING": Tipos.BOOL,
+    "RANGE!=RANGE": Tipos.BOOL,
+    "STRUCT!=STRUCT": Tipos.BOOL,
+    "ARRAY!=ARRAY": Tipos.BOOL,
+    "OBJECT!=NOTHING": Tipos.BOOL,
+    "OBJECT!=OBJECT": Tipos.BOOL,
     # >=
     "INT64>=INT64": Tipos.BOOL,
     "FLOAT64>=INT64": Tipos.BOOL,
@@ -123,8 +137,8 @@ D_NATIVA = {
     'TYPEOF-OBJECT':['"Struct"',Tipos.STRUCT],
     
     #uppercase y lowercase
-    'UPPERCASE-String':['valor.upper()',Tipos.STRING],
-    'LOWERCASE-String':['valor.lower()',Tipos.STRING],
+    'UPPERCASE-STRING':['valor.upper()',Tipos.STRING],
+    'LOWERCASE-STRING':['valor.lower()',Tipos.STRING],
     
     #NUMERICAS
     'LOG10-INT64':['math.log10(valor)',Tipos.FLOAT],

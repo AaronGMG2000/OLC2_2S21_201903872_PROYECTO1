@@ -1,9 +1,10 @@
+from ..INSTRUCCIONES.RETURN import RETURN
 from typing import List
 from ..ABSTRACT.instruccion import Instruccion
 from ..ABSTRACT.NodoAST import NodoAST
 from ..GENERAL.Arbol import Arbol
 from ..GENERAL.Tabla_Simbolo import Tabla_Simbolo
-from ..GENERAL.Tipo import Tipos
+from ..GENERAL.Tipo import CICLICO, Tipos
 from ..GENERAL.error import Error
 
 class IF(Instruccion):
@@ -19,23 +20,28 @@ class IF(Instruccion):
         if self.elseif is not None:
                 res = self.elseif.Ejecutar(arbol, tabla)
                 if isinstance(res, Error): return res
-                if res:
-                    return True
+                if res is not False:
+                    self.tipo = self.elseif.tipo
+                    return res
                 
         condicion = self.ExpresionIf.Ejecutar(arbol, tabla)
         if isinstance(condicion, Error): return condicion        
         if self.ExpresionIf.tipo == Tipos.BOOL:
-            nuevaTabla = Tabla_Simbolo(tabla)
-            if self.elseif is not None:
-                nuevaTabla.Entorno = "Elseif"
-            else:
-                nuevaTabla.Entorno = "If"
-                
             if condicion:
                 for ins in self.InstrucionesIf:
-                    res = ins.Ejecutar(arbol, nuevaTabla)
+                    res = ins.Ejecutar(arbol, tabla)
                     if isinstance(res, Error):
                         arbol.errores.append(res)
+                    elif isinstance(res, RETURN):                   
+                        return res
+                    elif ins.tipo == CICLICO.BREAK:
+                        
+                        self.tipo = CICLICO.BREAK
+                        return True
+                    elif ins.tipo == CICLICO.CONTINUE:
+                        self.tipo = CICLICO.CONTINUE
+                        print(type(ins))               
+                        return True
                 return True
             return False
         else:

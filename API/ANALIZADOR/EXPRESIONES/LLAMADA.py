@@ -1,10 +1,12 @@
+from os import R_OK
+from ..INSTRUCCIONES.RETURN import RETURN
 from ..GENERAL.Simbolo import Simbolo
 from ..GENERAL.Lista_Simbolo import Lista_Simbolo
 from ..ABSTRACT.instruccion import Instruccion
 from ..ABSTRACT.NodoAST import NodoAST
 from ..GENERAL.Arbol import Arbol
 from ..GENERAL.Tabla_Simbolo import Tabla_Simbolo
-from ..GENERAL.Tipo import Tipos
+from ..GENERAL.Tipo import CICLICO, Tipos
 from ..GENERAL.error import Error
 
 class LLAMADA_EXP(Instruccion):
@@ -41,9 +43,41 @@ class LLAMADA_EXP(Instruccion):
                 self.tipo = Tipos.OBJECT
                 return dic
             elif variable.getTipo() == Tipos.FUNCTION:
-                pass
+                contenido = variable.getValor()
+                x = 0
+                if len(self.parametros)!=len(contenido[0]):
+                    return Error("Sintactico","La función requiere "+str(len(contenido[0]))+"Parametros y esta recibiendo "+str(len(self.parametros), self.fila, self.columna) )
+                nuevoEntorno = Tabla_Simbolo(tabla, self.id)
+                nuevoEntorno.funcion = True
+                for par in contenido[0]:
+                    
+                    variable2 = self.parametros[x].Ejecutar(arbol, tabla)
+                    if par[1] != Tipos.NOTHING:
+                        if self.parametros[x].tipo!= par[1]:
+                            return Error("Semantico", "Tipo de variable de función invalido", self.fila, self.columna)
+                    newData = Simbolo(variable2, self.parametros[x].tipo, par[0], self.fila, self.columna)
+                    nuevoEntorno.tabla[par[0]] = newData
+                    x+=1
+                arbol.PilaFunc.append(self.id)
+                for inst in contenido[1]:
+                    res = inst.Ejecutar(arbol, nuevoEntorno)
+                    if isinstance(res, Error):
+                        arbol.errores.append(res)
+                    if isinstance(res, RETURN):
+                        arbol.PilaFunc.pop()
+                        self.tipo = res.tipoA
+                        return res.valor
+                    elif inst.tipo == CICLICO.BREAK:
+                        return Error("Sintactico","No se puede usar BREAK en una función", self.fila, self.columna)
+                    elif inst.tipo == CICLICO.CONTINUE:
+                        return Error("Sintactico","No se puede usar CONTINUE en una función", self.fila, self.columna)
+                        
+                arbol.PilaFunc.pop()
+                self.tipo = Tipos.NOTHING
+                return "nothing"
             else:
                 return Error("Sintactico","la variable indicada no corresponde a un struct o una función", self.fila, self.columna)
+
         
     def getNodo(self) -> NodoAST:
         nodo = NodoAST("LLAMADA")

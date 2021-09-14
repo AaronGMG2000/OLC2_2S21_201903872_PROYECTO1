@@ -9,7 +9,9 @@ class List_Simbolo(object):
     def Agregar(self, simbolo: Lista_Simbolo):
         try:
             self.Lista[simbolo.nombre +"-"+ simbolo.ambito]
+            self.Lista[simbolo.nombre +"-"+ simbolo.ambito] = simbolo
         except:
+            simbolo.numero = len(self.Lista)+1
             self.Lista[simbolo.nombre +"-"+ simbolo.ambito] = simbolo
         return
     

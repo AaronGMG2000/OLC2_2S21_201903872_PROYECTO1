@@ -15,9 +15,10 @@ class Asignacion(Instruccion):
         self.id = id
         self.id2 = id2
         self.Posiciones = Posicion
+        self.ultimo = Tipos.ENTERO;
 
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
-        variable = tabla.getVariable(self.id)
+        variable = tabla.getVariable(self.id, tabla.funcion)
         content = self.expresion.Ejecutar(arbol, tabla)
         if self.id2==None:
             if isinstance(content, Error): return content
@@ -26,8 +27,8 @@ class Asignacion(Instruccion):
             if variable is None:
                 if self.Posiciones is not None:
                     return Error("Sintactico","La variable indicada no existe", self.fila, self.columna)
-                arbol.Lista_Simbolo.Agregar(Lista_Simbolo(self.id, "VARIABLE", tabla.Entorno, self.fila, self.columna))
-                nuevoSimbolo = Simbolo(content, self.expresion.tipo, self.id, self.fila, self.columna, None)
+                arbol.Lista_Simbolo.Agregar(Lista_Simbolo(self.id, self.expresion.tipo.value, tabla.Entorno, self.fila, self.columna))
+                nuevoSimbolo = Simbolo(content, self.expresion.tipo, self.id, self.fila, self.columna)
                 tabla.setVariable(nuevoSimbolo)
                 return content
             else:
@@ -38,10 +39,15 @@ class Asignacion(Instruccion):
                     arr = self.cambioArray(self.Posiciones, arr, arbol, tabla, len(self.Posiciones), 0, content)
                     if isinstance(arr, Error): return arr
                     self.tipo = self.expresion.tipo
+                    if self.ultimo == Tipos.RANGE:
+                        variable.setValor(arr)
                     return content                                        
                                         
                 if variable.getTipo() == Tipos.STRUCT:
                     return Error("Sintactico","No se puede modificar un tipo Struct", self.fila, self.columna)
+                if variable.getTipo() == Tipos.FUNCTION:
+                    return Error("Sintactico","No se puede modificar un tipo FUNCTION", self.fila, self.columna)
+                arbol.Lista_Simbolo.Agregar(Lista_Simbolo(self.id, self.expresion.tipo.value, tabla.Entorno, self.fila, self.columna))
                 variable.setValor(content)
                 variable.setTipo(self.expresion.tipo)
                 return content
@@ -110,6 +116,7 @@ class Asignacion(Instruccion):
                                         arr = self.cambioArray(id2[1], get[0], arbol, tabla, len(id2[1]), 0, content)
                                         if isinstance(arr, Error): return arr
                                         get[0] = arr
+                                        
                                         self.tipo = self.expresion.tipo
                                         get[1] = self.expresion.tipo
                                         return content
@@ -157,7 +164,20 @@ class Asignacion(Instruccion):
                 res-=1
                 if res < 0:
                     return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
-            array[res] = self.cambioArray(list, array[res], arbol, tabla, max, pos+1, nuevo)
+                array[res] = self.cambioArray(list, array[res], arbol, tabla, max, pos+1, nuevo)
+            elif posicion.tipo == Tipos.RANGE:
+                if res[0] == None and res[1] == None:
+                    array = self.cambioArray(list, array[:], arbol, tabla, max, pos+1, nuevo)
+                else:
+                    try:
+                        izquierda = res[0]-1
+                        derecha = res[1]-1
+                        if izquierda<0 and derecha<0:
+                            return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
+                        array = self.cambioArray(list, array[izquierda:derecha+1], arbol, tabla, max, pos+1, nuevo)
+                    except:
+                        return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
+
             return array
         else:
             posicion = list[pos]
@@ -166,18 +186,44 @@ class Asignacion(Instruccion):
             if posicion.tipo != Tipos.ENTERO and posicion.tipo!= Tipos.RANGE:
                 return Error("Sintactico","La posición del array debe ser un Int64 o un rango", self.fila, self.columna)
             if posicion.tipo == Tipos.ENTERO:
-                res-=1
-                if res < 0:
+                self.ultimo = Tipos.ENTERO
+                n=res-1
+                if n < 0:
                     return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
-            if self.expresion.tipo == Tipos.ARRAY:
-                array[res] = nuevo
-            else:
-                if isinstance(array[res], Simbolo):
-                    array[res].setValor(nuevo)
-                    array[res].setTipo(self.expresion.tipo)
+                if self.expresion.tipo == Tipos.ARRAY:
+                    array[n] = nuevo
                 else:
-                    array[res] = Simbolo(nuevo, self.expresion.tipo, "", self.fila, self.columna)
-            return  array
+                    if isinstance(array[n], Simbolo):
+                        array[n].setValor(nuevo)
+                        array[n].setTipo(self.expresion.tipo)
+                    else:
+                        array[n] = Simbolo(nuevo, self.expresion.tipo, "", self.fila, self.columna)
+                return  array
+            else:
+                self.ultimo = Tipos.RANGE
+                izquierda = 0
+                derecha = 0
+                if res[0] == None and res[1] == None:
+                    array = array[:]
+                else:
+                    try:
+                        izquierda = res[0]-1
+                        derecha = res[1]-1
+                        if izquierda<0 and derecha<0:
+                            return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
+                    except:
+                        return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
+
+                if self.expresion.tipo == Tipos.ARRAY:
+                    return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
+                else:
+                    for ar in range(izquierda,derecha+1):
+                        if isinstance(array[ar], Simbolo):
+                            array[ar].setValor(nuevo)
+                            array[ar].setTipo(self.expresion.tipo)
+                        else:
+                            array[ar] = Simbolo(nuevo, self.expresion.tipo, "", self.fila, self.columna)
+                return  array
     
     
         

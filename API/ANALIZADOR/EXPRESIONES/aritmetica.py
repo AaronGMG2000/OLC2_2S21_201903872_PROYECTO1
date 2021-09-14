@@ -13,7 +13,7 @@ class Aritmetica(Instruccion):
         self.operador = operador
         self.op1 = op1
         self.op2 = op2 
-
+        
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
         izq = None
         der = None
@@ -29,14 +29,13 @@ class Aritmetica(Instruccion):
                 operando = tipo[1]
             except:
                 return Error("Semantico", "No se puede operar los tipos "+self.op1.tipo.value+" y "+self.op2.tipo.value+
-                             " con el operando "+operando.value, self.fila, self.columna)
+                             " con el operando "+self.operador.value, self.fila, self.columna)
             if operando.value == "^":
                 res = math.pow(izq, der)
                 if self.tipo == Tipos.ENTERO:
                     return int(res)
                 else:
                     return res
-                return 
             return eval(f'izq {operando.value} der')
         else:
             izq = self.op1.Ejecutar(arbol, tabla)

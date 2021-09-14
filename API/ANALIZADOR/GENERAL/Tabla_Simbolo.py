@@ -7,6 +7,7 @@ class Tabla_Simbolo(object):
         self.anterior = anterior
         self.tabla = {}
         self.Entorno = Entorno
+        self.funcion = False
 
     def setVariable(self, simbolo: Simbolo):
         entorno = self
@@ -21,14 +22,12 @@ class Tabla_Simbolo(object):
                 return False
             else:
                 entorno = entorno.getAnterior()
-
         self.tabla[simbolo.getID()] = simbolo
         return True
     
-    def getVariable(self, ID):
+    def getVariable(self, ID, funcion = False):
         entorno = self
         while entorno is not None:
-            
             try:
                 variable = entorno.getTable()[ID]
             except Exception:
@@ -38,6 +37,7 @@ class Tabla_Simbolo(object):
                 return variable
             else:
                 entorno = entorno.getAnterior()
+                    
         return None
 
     def getTable(self):

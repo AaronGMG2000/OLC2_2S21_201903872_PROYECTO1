@@ -8,8 +8,8 @@ from ..GENERAL.error import Error
 
 class Rango(Instruccion):
 
-    def __init__(self, tipo:Tipos, valor1, valor2, fila, columna, rango):
-        super().__init__(tipo, fila, columna)
+    def __init__(self, valor1, valor2, fila, columna):
+        super().__init__(Tipos.RANGE, fila, columna)
         self.valor1 = valor1
         self.valor2 = valor2
 
@@ -19,6 +19,9 @@ class Rango(Instruccion):
         return nodo
 
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
+        if self.valor1 == None and self.valor2 == None:
+            return [None, None]
+
         v1 = self.valor1.Ejecutar(arbol, tabla)
         if isinstance(v1, Error): return v1
         v2 = self.valor2.Ejecutar(arbol, tabla)

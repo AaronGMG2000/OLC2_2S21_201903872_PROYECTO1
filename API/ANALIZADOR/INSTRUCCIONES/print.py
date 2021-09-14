@@ -25,7 +25,8 @@ class Imprimir(Instruccion):
                 val = val[1]
             elif ex.tipo == Tipos.ARRAY :
                 val = self.getArrayValue(val, "")
-            
+            elif ex.tipo == Tipos.FUNCTION:
+                val = val[2]
                 
             if tamaño == len(self.expresion):
                 valor += str(val)
@@ -53,6 +54,8 @@ class Imprimir(Instruccion):
                 val +='"'+valor[0]+'"'
             elif valor[1] == Tipos.CHAR:
                 val +='"'+valor[0]+'"'
+            elif valor[1].tipo == Tipos.FUNCTION:
+                val = valor[2]
             else:
                 val += str(valor[0])
         val += ")"
@@ -74,6 +77,8 @@ class Imprimir(Instruccion):
                         val +='"'+valor+'"'
                     elif sim.getTipo() == Tipos.CHAR:
                         val +="'"+valor+"'"
+                    elif sim.getTipo() == Tipos.FUNCTION:
+                        val = valor[2]
                     else:
                         val+=str(valor)
         val += ']'

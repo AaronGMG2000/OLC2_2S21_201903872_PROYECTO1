@@ -1,9 +1,10 @@
+from ..INSTRUCCIONES.RETURN import RETURN
 from typing import List
 from ..ABSTRACT.instruccion import Instruccion
 from ..ABSTRACT.NodoAST import NodoAST
 from ..GENERAL.Arbol import Arbol
 from ..GENERAL.Tabla_Simbolo import Tabla_Simbolo
-from ..GENERAL.Tipo import Tipos
+from ..GENERAL.Tipo import CICLICO, Tipos
 from ..GENERAL.error import Error
 
 class CONDICION(Instruccion):
@@ -17,14 +18,20 @@ class CONDICION(Instruccion):
         res = self.funcion_if.Ejecutar(arbol, tabla)
         if isinstance(res, Error): return res        
         if res:
-            return True
+            self.tipo = self.funcion_if.tipo
+            return res
         else:
             if self.InstrucionesElse is not None:
-                nuevaTabla = Tabla_Simbolo(tabla, "Else")
                 for ins in self.InstrucionesElse:
-                    res = ins.Ejecutar(arbol, nuevaTabla)
+                    res = ins.Ejecutar(arbol, tabla)
                     if isinstance(res, Error):
                         arbol.errores.append(res)
+                    elif isinstance(res, RETURN):                     
+                        return res
+                    elif ins.tipo == CICLICO.BREAK:
+                        return True
+                    elif ins.tipo == CICLICO.CONTINUE:
+                        return True
             return True
                     
     def getNodo(self) -> NodoAST:

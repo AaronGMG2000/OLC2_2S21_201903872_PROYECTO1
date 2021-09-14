@@ -1,3 +1,4 @@
+import re
 from ..ABSTRACT.instruccion import Instruccion
 from ..ABSTRACT.NodoAST import NodoAST
 from ..GENERAL.Arbol import Arbol
@@ -20,10 +21,9 @@ class Variable(Instruccion):
             if variable is not None:
                 self.tipo = variable.getTipo()
                 if self.tipo == Tipos.ARRAY:
-                    arr = self.getArrayValue(variable.getValor(), [])
                     if self.posiciones is not None:
                         try:
-                            val = self.getArray(arr, arbol, tabla)
+                            val = self.getArray(variable.getValor(), arbol, tabla)
                             if isinstance(val, Error): return val
                             if isinstance(val, Simbolo):
                                 self.tipo = val.getTipo()
@@ -34,7 +34,7 @@ class Variable(Instruccion):
                         except:
                             return Error("Sintactico","Posicion de Array fuera de rango", self.fila, self.columna)
                     else:
-                        return arr
+                        return variable.getValor()
                 elif self.posiciones is not None:
                     return Error("Sintactico","La variable indicada no es un array", self.fila, self.columna)
                 else:
@@ -76,33 +76,29 @@ class Variable(Instruccion):
                 if res < 0:
                     return Error("Sintactico","Posición de Array fuera de rango",self.fila, self.columna)
                 data = data[res]
-            if posicion.tipo == Tipos.ARRAY:
-                data = self.clonarSimbolos(data, posicion[0]-1, posicion[1]-1)
+            if posicion.tipo == Tipos.RANGE:
+                data = self.clonarSimbolos(data, res[0], res[1])
                 if isinstance(data, Error): return data
         return data
         
     def clonarSimbolos(self, array, izquierda, derecha):
-        if izquierda <0 or derecha<0:
-            return Error("Sintactico", "Valor fuera de rango del array", self.fila, self.columna)
+        array2 = None
+        if izquierda != None and derecha!=None:
+            izquierda -=1
+            derecha -=1
+            if izquierda <0 or derecha<0:
+                return Error("Sintactico", "Valor fuera de rango del array", self.fila, self.columna)
+            array2 = array[izquierda:derecha+1]
+        else:
+            array2 = array[:]
         newarray = []
-        array2 = array[izquierda:derecha]
         for sim in array2:
             if isinstance(sim, Simbolo):
                 newarray.append(Simbolo(sim.valor, sim.tipo, "", sim.fila, sim.columna))
             else:
                 newarray.append(sim)
         return newarray
-        
-    def getArrayValue(self, simb, arr):
-        for sim in simb:
-            if not isinstance(sim, Simbolo):
-                arr.append(self.getArrayValue(sim, []))
-            else:
-                arr.append(sim)
-        return arr
-    
-    
-        
+              
             
     
     def getNodo(self) -> NodoAST:

@@ -23,8 +23,9 @@ class ImprimirEnter(Instruccion):
                 val = self.getStruct("", val)
             elif ex.tipo == Tipos.STRUCT:
                 val = val[1]
-            
-            if ex.tipo == Tipos.ARRAY :
+            elif ex.tipo == Tipos.FUNCTION:
+                val = val[2]
+            elif ex.tipo == Tipos.ARRAY :
                 val = self.getArrayValue(val, "")
                 
             if tamaño == len(self.expresion):
@@ -53,6 +54,8 @@ class ImprimirEnter(Instruccion):
                 val +='"'+valor[0]+'"'
             elif valor[1] == Tipos.CHAR:
                 val +='"'+valor[0]+'"'
+            elif valor[1] == Tipos.FUNCTION:
+                val = valor[2]
             else:
                 val += str(valor[0])
         val += ")"
@@ -74,6 +77,8 @@ class ImprimirEnter(Instruccion):
                         val +='"'+valor+'"'
                     elif sim.getTipo() == Tipos.CHAR:
                         val +="'"+valor+"'"
+                    elif sim.getTipo() == Tipos.FUNCTION:
+                        val = valor[2]
                     else:
                         val+=str(valor)
         val += ']'

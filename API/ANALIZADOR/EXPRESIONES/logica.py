@@ -14,15 +14,19 @@ class Logica(Instruccion):
         self.operador = operador
         self.op1 = op1
         self.op2 = op2
-    
+
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
         izq = None
-        der = None
-        operando = ''
+        der = None        
+        operando = ''        
         if self.op2 is not None:
+            
             izq = self.op1.Ejecutar(arbol, tabla)
             if isinstance(izq, Error): return izq
-            
+            if self.operador.value == "&&":
+                if not izq: return izq
+            if self.operador.value == "||":
+                if izq: return izq
             der = self.op2.Ejecutar(arbol, tabla)
             if isinstance(der, Error): return der
             try:
