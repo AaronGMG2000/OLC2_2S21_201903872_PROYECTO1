@@ -48,11 +48,9 @@ class WHILE(Instruccion):
         
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('WHILE')
-        nodo.agregarHijo("while")
         nodo.agregarHijoNodo(self.expresion.getNodo())
-        nodoInst = NodoAST('INSTRUCIONES')
+        inst = NodoAST('INSTRUCCIONES')
         for ins in self.instruciones:
-            nodoInst.agregarHijoNodo(ins.getNodo())
-        nodo.agregarHijo("end")
-        nodo.agregarHijo(";")
+            inst.agregarHijoNodo(ins.getNodo())
+        nodo.agregarHijoNodo(inst)
         return nodo

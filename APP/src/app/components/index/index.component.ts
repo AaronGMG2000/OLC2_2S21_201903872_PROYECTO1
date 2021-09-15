@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { IndexService } from 'src/app/services/index.service';
 import {Pestaña} from 'src/app/models/pestaña';
 import 'codemirror/mode/go/go';
@@ -14,11 +14,11 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/lint/lint';
 import 'codemirror/addon/lint/json-lint';
-
-
+import {graphviz} from 'd3-graphviz'
 import 'codemirror/addon/fold/xml-fold';
 import { COMPILADORService } from 'src/app/services/compilador.service';
 import { Contenido } from 'src/app/models/contenido';
+
 
 @Component({
   selector: 'app-index',
@@ -26,11 +26,18 @@ import { Contenido } from 'src/app/models/contenido';
   styleUrls: ['./index.component.scss']
 })
 export class IndexComponent implements OnInit {
+  
+  @ViewChild('graphContainer', { static: false }) graph: ElementRef;
+
   Pestanas: Array<Pestaña> = [];
   NumTab = 0;
   NumError = 1;
+  AST = ''
   ContenidoTab = '';
   actual:any = undefined;
+  showSecondPopup2 = false;
+  showSecondPopup3 = false;
+  showSecondPopup = false;
   CONTENT = '';
   CONSOLA = '';
   errores: any;
@@ -54,6 +61,26 @@ export class IndexComponent implements OnInit {
         hint: 'AST',
         stylingMode: 'contained',
         onClick: this.GRAFICAR.bind(this),
+      },
+    },
+    {
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        icon: 'contentlayout',
+        hint: 'ERROR',
+        stylingMode: 'contained',
+        onClick: this.GRAFICAR2.bind(this),
+      },
+    },
+    {
+      location: 'after',
+      widget: 'dxButton',
+      options: {
+        icon: 'contentlayout',
+        hint: 'SIMBOLOS',
+        stylingMode: 'contained',
+        onClick: this.GRAFICAR3.bind(this),
       },
     },
     {
@@ -154,9 +181,10 @@ export class IndexComponent implements OnInit {
   saveAsProject() {
     //you can enter your own file name and extension
     if (this.NumTab!=0) {
-      this.writeContents(this.CONTENT, this.ContenidoTab + ".ty", "text/plain");
+      this.writeContents(this.CONTENT, this.ContenidoTab + ".jl", "text/plain");
     }
   }
+
   writeContents(content:string, fileName:string, contentType:string) {
     var a = document.createElement("a");
     var file = new Blob([content], { type: contentType });
@@ -177,9 +205,11 @@ export class IndexComponent implements OnInit {
   LlenarContent(text: string): void{
     this.CONTENT = text;
   }
+
   getNumero():number{
     return this.NumError++;
   }
+
   Compilar(): void{
     const cont: Contenido = {
       Contenido: this.CONTENT
@@ -190,6 +220,7 @@ export class IndexComponent implements OnInit {
         this.NumError = 1;
         this.CONSOLA = res.consola;
         this.actual.consola = this.CONSOLA;
+        this.AST = res.AST;
         this.errores = res.Errores;
         this.simbolos = res.Simbolo;
         this.actual.simbolo = res.Simbolo;
@@ -199,15 +230,27 @@ export class IndexComponent implements OnInit {
     );
   }
 
-  GRAFICAR(): void{
-    const cont: Contenido = {
-      Contenido: this.CONTENT
-    };
-    this.compilador.GRAFICAR(cont).subscribe(
-      (res: any) => {
-        console.log('correcto');
-      },
-      (err: any) => console.log(err)
-    );
+  reports() {
+    let width = this.graph.nativeElement.offsetWidth;
+    let height = this.graph.nativeElement.offsetHeight;
+    graphviz('#graph')
+      .width(width)
+      .height(height)
+      .fit(true)
+      .scale(1)
+      .renderDot(this.AST);
   }
+
+  GRAFICAR(): void{
+    this.showSecondPopup = true
+  }
+
+  GRAFICAR2(): void{
+    this.showSecondPopup2 = true
+  }
+
+  GRAFICAR3(): void{
+    this.showSecondPopup3 = true
+  }
+
 }

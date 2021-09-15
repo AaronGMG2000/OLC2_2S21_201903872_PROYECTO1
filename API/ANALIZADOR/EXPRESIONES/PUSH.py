@@ -29,5 +29,13 @@ class PUSH(Instruccion):
         else:
             return Error("Sintactico","Solo se puede ejecutar push en una lista", self.fila, self.columna)
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
+        nodo = NodoAST('PUSH')
+        nodo.agregarHijo('push')
+        nodo.agregarHijo('!')
+        nodo.agregarHijo('(')
+        nodo.agregarHijoNodo(self.array.getNodo())
+        nodo.agregarHijo(",")
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+        nodo.agregarHijo(')')
+        nodo.agregarHijo(";")
         return nodo

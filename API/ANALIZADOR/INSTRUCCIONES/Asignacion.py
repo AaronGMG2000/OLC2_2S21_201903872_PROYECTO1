@@ -231,7 +231,19 @@ class Asignacion(Instruccion):
         nodo = NodoAST('ASIGNACION')
         id = NodoAST("ID")
         id.agregarHijo(self.id)
-        nodo.agregarHijoNodo(id) 
+        if self.Posiciones is not None:
+            anterior_pos = None
+            nodo_posicion = None
+            for posicion in self.Posiciones:
+                nodo_posicion = NodoAST("LISTA_ARRAY")
+                if anterior_pos is not None:
+                    nodo_posicion.agregarHijoNodo(anterior_pos)
+                nodo_posicion.agregarHijo("[")
+                nodo_posicion.agregarHijoNodo(posicion.getNodo())
+                nodo_posicion.agregarHijo("]")
+                anterior_pos = nodo_posicion
+            id.agregarHijoNodo(nodo_posicion)
+        nodo.agregarHijoNodo(id)
         if self.id2 is not None:
             id = None
             anterior = None
@@ -240,11 +252,27 @@ class Asignacion(Instruccion):
                 idd = NodoAST("ID")
                 if anterior is not None:
                     id.agregarHijoNodo(anterior)
+                
                 id.agregarHijo(".")
                 idd.agregarHijo(id2[0])
                 id.agregarHijoNodo(idd)
+                if id2[1] is not None:
+                    nodo_arr = None
+                    anterior_arr = None
+                    for arr in id2[1]:
+                        nodo_arr = NodoAST("LISTA_ARRAY")
+                        if anterior_arr is not None:
+                            nodo_arr.agregarHijoNodo(anterior_arr)
+                        nodo_arr.agregarHijo("[")
+                        nodo_arr.agregarHijoNodo(arr.getNodo())
+                        nodo_arr.agregarHijo("]")
+                        anterior_arr = nodo_arr
+                    id.agregarHijoNodo(nodo_arr)
+                
                 anterior = id
             nodo.agregarHijoNodo(id)
+        else:
+            pass
         nodo.agregarHijo('=')
         nodo.agregarHijoNodo(self.expresion.getNodo())
         if self.tipo is not None:

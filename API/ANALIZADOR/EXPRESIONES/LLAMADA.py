@@ -57,7 +57,9 @@ class LLAMADA_EXP(Instruccion):
                             return Error("Semantico", "Tipo de variable de función invalido", self.fila, self.columna)
                     newData = Simbolo(variable2, self.parametros[x].tipo, par[0], self.fila, self.columna)
                     nuevoEntorno.tabla[par[0]] = newData
+                    arbol.Lista_Simbolo.Agregar(Lista_Simbolo(par[0], newData.getTipo(), nuevoEntorno.Entorno, self.fila, self.columna))
                     x+=1
+                    
                 arbol.PilaFunc.append(self.id)
                 for inst in contenido[1]:
                     res = inst.Ejecutar(arbol, nuevoEntorno)
@@ -85,13 +87,14 @@ class LLAMADA_EXP(Instruccion):
         nodo.agregarHijo("(")
         para = None
         anterior = None
-        for par in self.parametros:
-            para = NodoAST("PARAMETROS")
-            if anterior is not None:
-                para.agregarHijoNodo(anterior)
-            para.agregarHijoNodo(par.getNodo())
-            anterior = para
-        nodo.agregarHijoNodo(para)
+        if len(self.parametros):
+            for par in self.parametros:
+                para = NodoAST("PARAMETROS")
+                if anterior is not None:
+                    para.agregarHijoNodo(anterior)
+                para.agregarHijoNodo(par.getNodo())
+                anterior = para
+            nodo.agregarHijoNodo(para)
         nodo.agregarHijo(")")
         nodo.agregarHijo(";")
         return nodo

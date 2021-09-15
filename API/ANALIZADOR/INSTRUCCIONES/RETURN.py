@@ -26,5 +26,9 @@ class RETURN(Instruccion):
 
         
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
+        nodo = NodoAST('RETURN')
+        nodo.agregarHijo("return")
+        if self.expresion is not None:
+            nodo.agregarHijoNodo(self.expresion.getNodo())
+        nodo.agregarHijo(";")
         return nodo

@@ -113,4 +113,16 @@ class Variable(Instruccion):
             nodo.agregarHijo(".")
             id2.agregarHijo(self.id2)
             nodo.agregarHijoNodo(id2)
+            if self.posiciones is not None:
+                anterior_pos = None
+                nodo_posicion = None
+                for pos in self.posiciones:
+                    nodo_posicion = NodoAST("LISTA_ARRAY")
+                    if anterior_pos is not None:
+                        nodo_posicion.agregarHijoNodo(anterior_pos)
+                    nodo_posicion.agregarHijo("[")
+                    nodo_posicion.agregarHijoNodo(pos.getNodo())
+                    nodo_posicion.agregarHijo("]")
+                    anterior_pos = nodo_posicion
+                nodo.agregarHijoNodo(nodo_posicion)
         return nodo

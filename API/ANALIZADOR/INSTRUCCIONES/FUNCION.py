@@ -34,6 +34,29 @@ class FUNCION(Instruccion):
             return Error("Sintactico","La función indicada ya existe", self.fila, self.columna)
         
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
-        
+        nodo = NodoAST('FUNCTION')
+        nodo.agregarHijo(self.id)
+        nodo.agregarHijo("(")
+        if len(self.parametros):
+            para = None
+            anterio = None
+            for par in self.parametros:
+                para = NodoAST("PARAMETROS")
+                if anterio is not None:
+                    para.agregarHijoNodo(anterio)
+                    para.agregarHijo(",")
+                    
+                para.agregarHijo(par[0])
+                if par[1] != Tipos.NOTHING:
+                    para.agregarHijo("::")
+                    para.agregarHijo(par[1].value)
+                anterio = para
+            nodo.agregarHijoNodo(para)
+        nodo.agregarHijo(")")
+        inst = NodoAST("INSTRUCCIONES")
+        for ins in self.instruciones:
+            inst.agregarHijoNodo(ins.getNodo())
+        nodo.agregarHijoNodo(inst)
+        nodo.agregarHijo("end")
+        nodo.agregarHijo(";")
         return nodo

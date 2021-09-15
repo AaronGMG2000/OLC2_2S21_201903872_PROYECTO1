@@ -11,6 +11,7 @@ class Arbol(object):
         self.consola = ""
         self.tabla_global = Tabla_Simbolo(None,"GLOBAL")
         self.errores = []
+        self.memoria = {}
         self.Lista_Simbolo = List_Simbolo()
         self.raiz = NodoAST("INSTRUCCIONES")
         self.grafo = ""
@@ -23,8 +24,8 @@ class Arbol(object):
             res = inst.Ejecutar(self, self.getGlobal())
             if isinstance(res, Error):
                 self.errores.append(res)
-            # self.raiz.agregarHijoNodo(inst.getNodo())
-        # self.graphAST()
+            self.raiz.agregarHijoNodo(inst.getNodo())
+        
         x = 1
         for er in self.errores:
             er.numero = x
@@ -43,13 +44,7 @@ class Arbol(object):
     
     
     def graphAST(self):
-        r = "AST"
-        ext = "svg"
-        stream = open(f'./reportes/{r}.dot','w');
-        stream.write(self.getDot(self.raiz))
-        stream.close()
-        os.system(f'dot -T svg -o ./reportes/{r}.{ext} ./reportes/{r}.dot')
-        os.system(f'start ./reportes/{r}.{ext}')
+        return self.getDot(self.raiz)
         
     def getDot(self, raiz):
     

@@ -10,7 +10,6 @@ export class AppComponent implements OnInit {
   title = 'App';
   constructor(public router: Router) {}
   ngOnInit(): void {
-    this.router.navigate(['/Analizador']);
   }
 }
 

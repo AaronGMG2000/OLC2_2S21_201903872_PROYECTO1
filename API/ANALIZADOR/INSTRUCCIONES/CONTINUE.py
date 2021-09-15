@@ -19,5 +19,5 @@ class CONTINUE(Instruccion):
 
         
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
+        nodo = NodoAST('CONTINUE')
         return nodo

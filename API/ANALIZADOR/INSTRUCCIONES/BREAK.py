@@ -22,5 +22,5 @@ class BREAK(Instruccion):
 
         
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
+        nodo = NodoAST('BREAK')
         return nodo

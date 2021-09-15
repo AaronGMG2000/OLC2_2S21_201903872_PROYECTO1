@@ -14,8 +14,10 @@ class Rango(Instruccion):
         self.valor2 = valor2
 
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('PRIMITIVO')
-        nodo.agregarHijo(str(self.valor))
+        nodo = NodoAST('RANGE')
+        nodo.agregarHijoNodo(self.valor1.getNodo())
+        nodo.agregarHijo(":")
+        nodo.agregarHijoNodo(self.valor2.getNodo())
         return nodo
 
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):

@@ -23,6 +23,11 @@ class LENGHT(Instruccion):
             return len(valor)
         else:
             return Error("Sintactico","Solo se puede ejecutar push en una lista", self.fila, self.columna)
+    
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
+        nodo = NodoAST('LENGTH')
+        nodo.agregarHijo("length")
+        nodo.agregarHijo("(")
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+        nodo.agregarHijo(")")
         return nodo

@@ -1,3 +1,4 @@
+from ..GENERAL.Lista_Simbolo import Lista_Simbolo
 from ..INSTRUCCIONES.RETURN import RETURN
 import re
 from ..GENERAL.Simbolo import Simbolo
@@ -71,6 +72,7 @@ class FOR(Instruccion):
                 variable.setValor(a)
             nuevaTabla = Tabla_Simbolo(tabla, "FOR")
             nuevaTabla.funcion = tabla.funcion
+            arbol.Lista_Simbolo.Agregar(Lista_Simbolo(self.id, variable.getTipo(), nuevaTabla.Entorno, self.fila, self.columna))
             nuevaTabla.setVariable(variable)
             for ins in self.instruciones:
                 res = ins.Ejecutar(arbol, nuevaTabla)
@@ -91,5 +93,10 @@ class FOR(Instruccion):
         
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('FOR')
-        
+        nodo.agregarHijo(self.id)
+        nodo.agregarHijoNodo(self.expresion.getNodo())
+        inst = NodoAST('INSTRUCCIONES')
+        for ins in self.instruciones:
+            inst.agregarHijoNodo(ins.getNodo())
+        nodo.agregarHijoNodo(inst)
         return nodo

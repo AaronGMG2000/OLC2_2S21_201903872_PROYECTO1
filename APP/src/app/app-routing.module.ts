@@ -1,14 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { IndexComponent } from './components/index/index.component';
+import { HomeComponent } from './components/home/home.component';
 
 const routes: Routes = [
-  {
-    path: 'Analizador',
-    component: IndexComponent,
-  },
-  { path: '', redirectTo: '/Analizador', pathMatch: 'full' },
-  { path: '*', redirectTo: '/Analizador', pathMatch: 'full' },
+  { path: 'Home',component: HomeComponent},
+  { path: 'Analizador',component: IndexComponent},
+  { path: '', redirectTo: '/Home', pathMatch: 'full' },
+  { path: '**', redirectTo: '/Home', pathMatch: 'full' },
 ];
 
 @NgModule({

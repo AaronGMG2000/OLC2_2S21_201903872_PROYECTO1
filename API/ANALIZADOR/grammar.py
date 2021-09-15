@@ -308,7 +308,7 @@ def p_global_tipo(t):
 
 def p_global_tipo_id(t):
     '''GLOBAL : r_global id igualT expresion dospuntos dospuntos id'''
-    t[0] = GLOBAL(t[2], t.lineno(1), col(t.slice[2]), t[4], t[7])
+    t[0] = GLOBAL(t[2], t.lineno(1), col(t.slice[2]), t[4], Tipos.OBJECT)
 
 def p_local(t):
     '''LOCAL : r_local id'''
@@ -324,7 +324,7 @@ def p_local_tipo(t):
     
 def p_local_tipo_id(t):
     '''LOCAL : r_local id igualT expresion dospuntos dospuntos id'''
-    t[0] = LOCAL(t[2], t.lineno(1), col(t.slice[2]),t[7])
+    t[0] = LOCAL(t[2], t.lineno(1), col(t.slice[2]),Tipos.OBJECT)
     
 # Condicionales
 def p_condicional_else(t):
@@ -384,7 +384,7 @@ def p_asignacionTipo(t):
     
 def p_asignacionTipo_id(t):
     '''asignacion : id igualT expresion dospuntos dospuntos id'''
-    t[0] = Asignacion(t[6], t.lineno(1), col(t.slice[2]),t[3], t[1])
+    t[0] = Asignacion(Tipos.OBJECT, t.lineno(1), col(t.slice[2]),t[3], t[1])
 
 #ASIGNACION ARRAY
 #Arrays
@@ -459,7 +459,7 @@ def p_parametros_function2(t):
 def p_parametros_function2_id(t):
     '''parametros_function : parametros_function coma id dospuntos dospuntos id'''
     if t[3] != None:
-        t[1].append([t[3], t[6]])
+        t[1].append([t[3], Tipos.OBJECT])
     t[0] = t[1]
     
 def p_parametros_function_unico(t):
@@ -481,7 +481,7 @@ def p_parametros_function_tipo_id(t):
     if t[1] == None:
         t[0] = []
     else:
-        t[0] = [[t[1], t[4]]]
+        t[0] = [[t[1], Tipos.OBJECT]]
 
 #Structs
 
@@ -525,7 +525,7 @@ def p_parametro_struct_id(t):
     if t[1] == None:
         t[0] = []
     else:
-        t[0] = [t[1], t[4]]
+        t[0] = [t[1], Tipos.OBJECT]
 
 #impresiones
 ##impresiones

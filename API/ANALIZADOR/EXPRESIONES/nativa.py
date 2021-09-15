@@ -53,6 +53,13 @@ class Nativas(Instruccion):
                 else:
                     return Error('Semantico', 'La función '+self.Nativa.value.lower()+" requiere valores numericos", self.fila, self.columna)
         try:
+            if self.Nativa == Tipos_Nativa.STRING and type(valor) == type([]):
+                valor = valor[:]
+                for x in range(0,len(valor)):
+                    valor[x] = valor[x].getValor()
+                self.tipo = inst[1]
+                return valor
+                
             self.tipo = inst[1]
             return eval(inst[0])
         except:
@@ -60,23 +67,23 @@ class Nativas(Instruccion):
                 
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('NATIVA')
-        # if self.tipoNativa == Tipos_Nativa.LOG:
-        #     nodo.agregarHijo(self.Nativa.value)
-        #     nodo.agregarHijo('(')
-        #     nodo.agregarHijoNodo(self.expresion.getNodo())
-        #     nodo.agregarHijo(',')
-        #     nodo.agregarHijoNodo(self.valor2.getNodo())
-        #     nodo.agregarHijo(')')
-        # elif self.valor2 is not None:
-        #     nodo.agregarHijo(self.Nativa.value)
-        #     nodo.agregarHijo('(')
-        #     nodo.agregarHijo(self.expresion.value)
-        #     nodo.agregarHijo(',')
-        #     nodo.agregarHijoNodo(self.valor2.getNodo())
-        #     nodo.agregarHijo(')')
-        # else:
-        #     nodo.agregarHijo(self.Nativa.value)
-        #     nodo.agregarHijo('(')
-        #     nodo.agregarHijoNodo(self.expresion.getNodo())
-        #     nodo.agregarHijo(')')
+        if self.Nativa == Tipos_Nativa.LOG:
+            nodo.agregarHijo(self.Nativa.value)
+            nodo.agregarHijo('(')
+            nodo.agregarHijoNodo(self.expresion.getNodo())
+            nodo.agregarHijo(',')
+            nodo.agregarHijoNodo(self.valor2.getNodo())
+            nodo.agregarHijo(')')
+        elif self.valor2 is not None:
+            nodo.agregarHijo(self.Nativa.value)
+            nodo.agregarHijo('(')
+            nodo.agregarHijo(self.expresion.value)
+            nodo.agregarHijo(',')
+            nodo.agregarHijoNodo(self.valor2.getNodo())
+            nodo.agregarHijo(')')
+        else:
+            nodo.agregarHijo(self.Nativa.value)
+            nodo.agregarHijo('(')
+            nodo.agregarHijoNodo(self.expresion.getNodo())
+            nodo.agregarHijo(')')
         return nodo

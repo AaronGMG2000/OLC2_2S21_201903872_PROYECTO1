@@ -51,5 +51,17 @@ class GLOBAL(Instruccion):
                     tabla = tabla.anterior
         
     def getNodo(self) -> NodoAST:
-        nodo = NodoAST('FOR')
+        nodo = NodoAST('GLOBAL')
+        nodo.agregarHijo("global")
+        nodo.agregarHijo(self.id)
+        if self.expresion is not None:
+            nodo.agregarHijo("=")
+            nodo.agregarHijoNodo(self.expresion.getNodo())
+            if self.tipo is not None:
+                nodo.agregarHijo("::")
+                if self.tipo.value == Tipos.OBJECT:
+                    nodo.agregarHijo(Tipos.STRUCT.value)
+                else:
+                    nodo.agregarHijo(self.tipo.value)
+        nodo.agregarHijo(";")
         return nodo
