@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post('/Compilar')
 async def analysis(req: RequestModel):
     try:
-        sys.setrecursionlimit(5000)
+        sys.setrecursionlimit(10**6)
         h = gramatica.parse(req.Contenido)
         ast = Arbol(h)
         ast.ejecutar()

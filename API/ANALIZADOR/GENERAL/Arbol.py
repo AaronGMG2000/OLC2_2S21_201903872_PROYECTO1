@@ -24,8 +24,10 @@ class Arbol(object):
             res = inst.Ejecutar(self, self.getGlobal())
             if isinstance(res, Error):
                 self.errores.append(res)
-            self.raiz.agregarHijoNodo(inst.getNodo())
-        
+            try:
+                self.raiz.agregarHijoNodo(inst.getNodo())
+            except Exception as e:
+                print(e)
         x = 1
         for er in self.errores:
             er.numero = x

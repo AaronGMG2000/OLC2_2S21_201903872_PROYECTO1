@@ -28,7 +28,7 @@ class RETURN(Instruccion):
     def getNodo(self) -> NodoAST:
         nodo = NodoAST('RETURN')
         nodo.agregarHijo("return")
-        if self.expresion is not None:
+        if type(self.expresion)!=type(True):
             nodo.agregarHijoNodo(self.expresion.getNodo())
         nodo.agregarHijo(";")
         return nodo
