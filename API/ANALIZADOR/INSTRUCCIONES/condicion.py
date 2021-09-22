@@ -40,7 +40,9 @@ class CONDICION(Instruccion):
         nodo.agregarHijo("Else")
         nodoInst = NodoAST('INSTRUCIONES')
         for ins in self.InstrucionesElse:
-            nodoInst.agregarHijoNodo(ins.getNodo())
+            inst = NodoAST("INSTRUCCION")
+            inst.agregarHijoNodo(ins.getNodo())
+            nodoInst.agregarHijoNodo(inst)
         nodo.agregarHijoNodo(nodoInst)
         nodo.agregarHijo("end")
         nodo.agregarHijo(";")

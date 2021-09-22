@@ -13,21 +13,25 @@ class Arbol(object):
         self.errores = []
         self.memoria = {}
         self.Lista_Simbolo = List_Simbolo()
-        self.raiz = NodoAST("INSTRUCCIONES")
+        self.raiz = NodoAST("INIT")
         self.grafo = ""
         self.PilaCiclo = []
         self.PilaFunc = []
         self.c = 0
         
     def ejecutar(self):
+        Instrucciones = NodoAST("INSTRUCCIONES")
         for inst in self.getInstrucciones():
             res = inst.Ejecutar(self, self.getGlobal())
             if isinstance(res, Error):
                 self.errores.append(res)
             try:
-                self.raiz.agregarHijoNodo(inst.getNodo())
+                nodoInstruccion = NodoAST("INSTRUCCION")
+                nodoInstruccion.agregarHijoNodo(inst.getNodo())
+                Instrucciones.agregarHijoNodo(nodoInstruccion)
             except Exception as e:
                 print(e)
+        self.raiz.agregarHijoNodo(Instrucciones)
         x = 1
         for er in self.errores:
             er.numero = x

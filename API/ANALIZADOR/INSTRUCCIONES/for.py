@@ -97,6 +97,8 @@ class FOR(Instruccion):
         nodo.agregarHijoNodo(self.expresion.getNodo())
         inst = NodoAST('INSTRUCCIONES')
         for ins in self.instruciones:
-            inst.agregarHijoNodo(ins.getNodo())
+            insts = NodoAST("INSTRUCCION")
+            insts.agregarHijoNodo(ins.getNodo())
+            inst.agregarHijoNodo(insts)
         nodo.agregarHijoNodo(inst)
         return nodo

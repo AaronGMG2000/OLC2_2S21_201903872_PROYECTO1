@@ -55,7 +55,9 @@ class FUNCION(Instruccion):
         nodo.agregarHijo(")")
         inst = NodoAST("INSTRUCCIONES")
         for ins in self.instruciones:
-            inst.agregarHijoNodo(ins.getNodo())
+            insts = NodoAST("INSTRUCCION")
+            insts.agregarHijoNodo(ins.getNodo())
+            inst.agregarHijoNodo(insts)
         nodo.agregarHijoNodo(inst)
         nodo.agregarHijo("end")
         nodo.agregarHijo(";")

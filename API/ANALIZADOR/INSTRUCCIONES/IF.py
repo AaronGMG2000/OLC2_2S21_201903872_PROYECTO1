@@ -58,7 +58,9 @@ class IF(Instruccion):
         
         nodoInst = NodoAST('INSTRUCIONES')
         for ins in self.InstrucionesIf:
-            nodoInst.agregarHijoNodo(ins.getNodo())
+            inst = NodoAST("INSTRUCION")
+            inst.agregarHijoNodo(ins.getNodo())
+            nodoInst.agregarHijoNodo(inst)
         nodo.agregarHijoNodo(nodoInst)
         return nodo
         
