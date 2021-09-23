@@ -14,8 +14,8 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/lint/lint';
 import 'codemirror/addon/lint/json-lint';
-import {graphviz} from 'd3-graphviz'
 import 'codemirror/addon/fold/xml-fold';
+import {graphviz} from 'd3-graphviz'
 import { COMPILADORService } from 'src/app/services/compilador.service';
 import { Contenido } from 'src/app/models/contenido';
 

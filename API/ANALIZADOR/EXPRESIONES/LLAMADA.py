@@ -1,3 +1,5 @@
+from ..INSTRUCCIONES.BREAK import BREAK
+from ..INSTRUCCIONES.CONTINUE import CONTINUE
 from os import R_OK
 from ..INSTRUCCIONES.RETURN import RETURN
 from ..GENERAL.Simbolo import Simbolo
@@ -69,9 +71,9 @@ class LLAMADA_EXP(Instruccion):
                         arbol.PilaFunc.pop()
                         self.tipo = res.tipoA
                         return res.valor
-                    elif inst.tipo == CICLICO.BREAK:
+                    elif isinstance(res, BREAK):
                         return Error("Sintactico","No se puede usar BREAK en una función", self.fila, self.columna)
-                    elif inst.tipo == CICLICO.CONTINUE:
+                    elif isinstance(res, CONTINUE):
                         return Error("Sintactico","No se puede usar CONTINUE en una función", self.fila, self.columna)
                         
                 arbol.PilaFunc.pop()

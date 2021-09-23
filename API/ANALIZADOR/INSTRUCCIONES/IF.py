@@ -1,3 +1,5 @@
+from ..INSTRUCCIONES.BREAK import BREAK
+from ..INSTRUCCIONES.CONTINUE import CONTINUE
 from ..INSTRUCCIONES.RETURN import RETURN
 from typing import List
 from ..ABSTRACT.instruccion import Instruccion
@@ -21,7 +23,6 @@ class IF(Instruccion):
                 res = self.elseif.Ejecutar(arbol, tabla)
                 if isinstance(res, Error): return res
                 if res is not False:
-                    self.tipo = self.elseif.tipo
                     return res
                 
         condicion = self.ExpresionIf.Ejecutar(arbol, tabla)
@@ -34,14 +35,10 @@ class IF(Instruccion):
                         arbol.errores.append(res)
                     elif isinstance(res, RETURN):                   
                         return res
-                    elif ins.tipo == CICLICO.BREAK:
-                        
-                        self.tipo = CICLICO.BREAK
-                        return True
-                    elif ins.tipo == CICLICO.CONTINUE:
-                        self.tipo = CICLICO.CONTINUE
-                        print(type(ins))               
-                        return True
+                    elif isinstance(res, CONTINUE):
+                        return res
+                    elif isinstance(res, BREAK):
+                        return res
                 return True
             return False
         else:

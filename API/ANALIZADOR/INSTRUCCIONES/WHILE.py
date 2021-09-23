@@ -1,3 +1,5 @@
+from ..INSTRUCCIONES.BREAK import BREAK
+from ..INSTRUCCIONES.CONTINUE import CONTINUE
 from ..INSTRUCCIONES.RETURN import RETURN
 from typing import List
 from ..ABSTRACT.instruccion import Instruccion
@@ -31,10 +33,10 @@ class WHILE(Instruccion):
                     elif isinstance(res, RETURN):
                         arbol.PilaCiclo.pop()                  
                         return res
-                    elif inst.tipo == CICLICO.BREAK:
+                    elif isinstance(res, BREAK):
                         arbol.PilaCiclo.pop()
                         return True
-                    elif inst.tipo == CICLICO.CONTINUE:
+                    elif isinstance(res, CONTINUE):
                         break
                 evaluado = True
                 condicion = self.expresion.Ejecutar(arbol, tabla)

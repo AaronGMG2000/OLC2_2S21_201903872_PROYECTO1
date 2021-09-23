@@ -1,3 +1,5 @@
+from ..INSTRUCCIONES.CONTINUE import CONTINUE
+from ..INSTRUCCIONES.BREAK import BREAK
 from ..INSTRUCCIONES.RETURN import RETURN
 from typing import List
 from ..ABSTRACT.instruccion import Instruccion
@@ -18,7 +20,6 @@ class CONDICION(Instruccion):
         res = self.funcion_if.Ejecutar(arbol, tabla)
         if isinstance(res, Error): return res        
         if res:
-            self.tipo = self.funcion_if.tipo
             return res
         else:
             if self.InstrucionesElse is not None:
@@ -28,10 +29,10 @@ class CONDICION(Instruccion):
                         arbol.errores.append(res)
                     elif isinstance(res, RETURN):                     
                         return res
-                    elif ins.tipo == CICLICO.BREAK:
-                        return True
-                    elif ins.tipo == CICLICO.CONTINUE:
-                        return True
+                    elif isinstance(res, CONTINUE):
+                        return res
+                    elif isinstance(res, BREAK):
+                        return res
             return True
                     
     def getNodo(self) -> NodoAST:

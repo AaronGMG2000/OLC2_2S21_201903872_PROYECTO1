@@ -1,3 +1,5 @@
+from ..INSTRUCCIONES.BREAK import BREAK
+from ..INSTRUCCIONES.CONTINUE import CONTINUE
 from ..GENERAL.Lista_Simbolo import Lista_Simbolo
 from ..INSTRUCCIONES.RETURN import RETURN
 import re
@@ -81,10 +83,10 @@ class FOR(Instruccion):
                 elif isinstance(res, RETURN):
                     arbol.PilaCiclo.pop()
                     return res
-                elif ins.tipo == CICLICO.BREAK:
+                elif isinstance(res, BREAK):
                     arbol.PilaCiclo.pop()
                     return True
-                elif ins.tipo == CICLICO.CONTINUE:
+                elif isinstance(res, CONTINUE):
                     break
             evaluado = True
         arbol.PilaCiclo.pop()

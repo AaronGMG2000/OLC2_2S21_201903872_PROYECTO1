@@ -14,7 +14,7 @@ class CONTINUE(Instruccion):
 
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
         if len(arbol.PilaCiclo):
-            return True
+            return self
         return Error("Sintactico","La funcion CONTINUE unicamente se puede usar en ciclos", self.fila, self.columna)
 
         
