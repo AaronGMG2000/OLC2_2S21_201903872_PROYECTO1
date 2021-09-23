@@ -15,7 +15,7 @@ class Asignacion(Instruccion):
         self.id = id
         self.id2 = id2
         self.Posiciones = Posicion
-        self.ultimo = Tipos.ENTERO;
+        self.ultimo = Tipos.ENTERO
 
     def Ejecutar(self, arbol: Arbol, tabla: Tabla_Simbolo):
         variable = tabla.getVariable(self.id, tabla.funcion)
